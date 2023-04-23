@@ -1,0 +1,11 @@
+[package]
+name = "tauri-plugin-rrai-substrate"
+version = "0.0.1"
+authors = [ "You" ]
+description = ""
+edition = "2021"
+rust-version = "1.59"
+exclude = ["/examples"]
+
+[dependencies]
+tauri = { version = "1.2.2" }

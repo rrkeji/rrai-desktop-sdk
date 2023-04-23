@@ -1,0 +1,13 @@
+[package]
+edition = "2021"
+name = "rrai-desktop-sdk-common"
+version = "0.1.0"
+
+[dependencies]
+anyhow = "1.0"
+thiserror = "1.0.40"
+
+tracing = "0.1.15"
+tracing-subscriber = {version = "0.3", features = ["fmt"]}
+
+home = "0.5.4"

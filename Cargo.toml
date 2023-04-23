@@ -1,12 +1,18 @@
 [package]
+edition = "2021"
 name = "rrai-desktop-sdk"
 version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
+rrai-desktop-sdk-common = {version = "*", path = "crates/rrai-desktop-sdk-common"}
+tauri-plugin-rrai-ipfs = {version = "*", path = "plugins/tauri-plugin-rrai-ipfs"}
+tauri-plugin-rrai-sqlite = {version = "*", path = "plugins/tauri-plugin-rrai-sqlite"}
+tauri-plugin-rrai-substrate = {version = "*", path = "plugins/tauri-plugin-rrai-substrate"}
 
 [workspace]
-members = ["crates/rrai-core", "crates/rrai-substrate", "crates/rrai-sqlite"]
+members = [
+  "crates/rrai-desktop-sdk-common",
+  "plugins/tauri-plugin-rrai-sqlite",
+  "plugins/tauri-plugin-rrai-ipfs",
+  "plugins/tauri-plugin-rrai-substrate",
+]
