@@ -1,3 +1,8 @@
+mod files;
+pub mod zip;
+
+pub use files::*;
+
 use anyhow::{anyhow, Result};
 use std::path::PathBuf;
 
@@ -5,7 +10,7 @@ pub fn rrai_home_path() -> Result<PathBuf> {
     let home_path = std::env::var_os("IDNS_RRAI_PATH")
         .map(PathBuf::from)
         .or_else(|| {
-            home::home_dir().map(|tilde| {
+            home::home_dir().map(|tilde: PathBuf| {
                 let mut path = PathBuf::from(tilde);
                 path.push(".rrai");
                 path

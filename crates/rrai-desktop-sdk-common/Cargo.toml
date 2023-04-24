@@ -6,8 +6,17 @@ version = "0.1.0"
 [dependencies]
 anyhow = "1.0"
 thiserror = "1.0.40"
+bytes = "1.2"
+futures = "0.3"
 
 tracing = "0.1.15"
-tracing-subscriber = {version = "0.3", features = ["fmt"]}
+tracing-subscriber = { version = "0.3", features = ["fmt"] }
 
 home = "0.5.4"
+zip = "0.6"
+
+serde = { version = "1.0", features = ["derive"] }
+
+ipfs-api-backend-hyper = { version = "0.6", features = ["with-send-sync"] }
+
+tokio = { version = "1", features = ["full"] }
