@@ -2797,8 +2797,8 @@ dependencies = [
  "rrai-desktop-sdk-common",
  "tauri-plugin-rrai-appbox",
  "tauri-plugin-rrai-idns",
- "tauri-plugin-rrai-ipfs",
  "tauri-plugin-rrai-sqlite",
+ "tauri-plugin-rrai-storage",
  "tauri-plugin-rrai-substrate",
 ]
 
@@ -2807,11 +2807,15 @@ name = "rrai-desktop-sdk-common"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "bytes",
  "futures",
  "home",
  "ipfs-api-backend-hyper",
+ "lazy_static",
+ "rusqlite",
  "serde",
+ "serde_json",
  "thiserror",
  "tokio",
  "tracing",
@@ -3469,19 +3473,28 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-plugin-rrai-ipfs"
-version = "0.0.1"
-dependencies = [
- "tauri",
-]
-
-[[package]]
 name = "tauri-plugin-rrai-sqlite"
 version = "0.0.1"
 dependencies = [
  "anyhow",
  "rrai-desktop-sdk-common",
  "rusqlite",
+ "serde",
+ "serde_json",
+ "tauri",
+ "thiserror",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "tauri-plugin-rrai-storage"
+version = "0.0.1"
+dependencies = [
+ "anyhow",
+ "bytes",
+ "futures",
+ "rrai-desktop-sdk-common",
  "serde",
  "serde_json",
  "tauri",

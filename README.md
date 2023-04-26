@@ -8,7 +8,7 @@
 ## 新建Tauri插件
 
 ```bash
-cargo tauri plugin init --name rrai-ipfs
+cargo tauri plugin init --name rrai-storage
 ```
 
 ## 插件
@@ -18,7 +18,7 @@ cargo tauri plugin init --name rrai-ipfs
 
 ### rrai-idns
 
-### rrai-ipfs
+### rrai-storage
 
 ### rrai-sqlite
 

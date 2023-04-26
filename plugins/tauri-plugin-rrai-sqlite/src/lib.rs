@@ -1,13 +1,10 @@
-
-mod rusqlite_utils;
 mod sqlite;
 
 use sqlite::*;
 
 use tauri::{
     plugin::{Builder, TauriPlugin},
-    Runtime,
-    Manager
+    Manager, Runtime,
 };
 
 /// Initializes the plugin.
@@ -23,7 +20,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             execute
         ])
         .setup(|app| {
-            app.manage(SqliteMap::default());
+            // app.manage(SqliteMap::default());
             Ok(())
         })
         .build()

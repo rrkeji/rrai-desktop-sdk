@@ -8,6 +8,8 @@ anyhow = "1.0"
 thiserror = "1.0.40"
 bytes = "1.2"
 futures = "0.3"
+lazy_static = "1.4"
+async-trait = "0.1.68"
 
 tracing = "0.1.15"
 tracing-subscriber = { version = "0.3", features = ["fmt"] }
@@ -16,7 +18,10 @@ home = "0.5.4"
 zip = "0.6"
 
 serde = { version = "1.0", features = ["derive"] }
-
+serde_json = "1.0"
+# sqlite
+rusqlite = { version = "0.29.0", features = ["bundled"] }
+# IPFS
 ipfs-api-backend-hyper = { version = "0.6", features = ["with-send-sync"] }
 
 tokio = { version = "1", features = ["full"] }

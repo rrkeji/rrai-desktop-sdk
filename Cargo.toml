@@ -7,7 +7,7 @@ version = "0.1.0"
 rrai-desktop-sdk-common = { version = "*", path = "crates/rrai-desktop-sdk-common" }
 tauri-plugin-rrai-idns = { version = "*", path = "plugins/tauri-plugin-rrai-idns" }
 tauri-plugin-rrai-appbox = { version = "*", path = "plugins/tauri-plugin-rrai-appbox" }
-tauri-plugin-rrai-ipfs = { version = "*", path = "plugins/tauri-plugin-rrai-ipfs" }
+tauri-plugin-rrai-storage = { version = "*", path = "plugins/tauri-plugin-rrai-storage" }
 tauri-plugin-rrai-sqlite = { version = "*", path = "plugins/tauri-plugin-rrai-sqlite" }
 tauri-plugin-rrai-substrate = { version = "*", path = "plugins/tauri-plugin-rrai-substrate" }
 
@@ -16,7 +16,7 @@ members = [
   "crates/rrai-desktop-sdk-common",
   "plugins/tauri-plugin-rrai-idns",
   "plugins/tauri-plugin-rrai-sqlite",
-  "plugins/tauri-plugin-rrai-ipfs",
+  "plugins/tauri-plugin-rrai-storage",
   "plugins/tauri-plugin-rrai-substrate",
   "plugins/tauri-plugin-rrai-appbox",
 ]

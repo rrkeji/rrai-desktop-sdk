@@ -12,13 +12,13 @@ use app_downloader::download;
 
 /// Initializes the plugin.
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
-    tauri::async_runtime::block_on(async move {
-        //启动HTTP文件服务
-        tracing::debug!("启动HTTP文件服务");
-        app_server::Server::new()
-            .start()
-            .expect("启动HTTP文件服务失败");
-    });
+    // tauri::async_runtime::block_on(async move {
+    //     //启动HTTP文件服务
+    //     tracing::debug!("启动HTTP文件服务");
+    //     app_server::Server::new()
+    //         .start()
+    //         .expect("启动HTTP文件服务失败");
+    // });
 
     //
     Builder::new("rrai-appbox")
