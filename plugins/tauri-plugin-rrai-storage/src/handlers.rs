@@ -79,3 +79,17 @@ pub async fn create_dir(parent_id: u32, file_name: String) -> Result<usize> {
     .await?;
     Ok(res)
 }
+
+#[command]
+pub async fn ipfs_add_content(data: Vec<u8>) -> Result<String> {
+    //添加内容
+    let res = rrai_desktop_sdk_common::ipfs::ipfs_add_content(data).await?;
+    Ok(res)
+}
+
+#[command]
+pub async fn ipfs_get_content(cid: String) -> Result<Vec<u8>> {
+    //添加内容
+    let res = rrai_desktop_sdk_common::ipfs::ipfs_get_content(&cid).await?;
+    Ok(res)
+}

@@ -1,6 +1,7 @@
 mod constants;
 mod files;
 mod handlers;
+mod ipfs;
 mod migration;
 mod models;
 
@@ -27,6 +28,8 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             handlers::update_file,
             handlers::delete_file,
             handlers::create_dir,
+            handlers::ipfs_add_content,
+            handlers::ipfs_get_content,
         ])
         .build()
 }
