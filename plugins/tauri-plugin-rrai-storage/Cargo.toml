@@ -1,23 +1,23 @@
 [package]
-name = "tauri-plugin-rrai-storage"
-version = "0.0.1"
-authors = [ "You" ]
+authors = ["You"]
 description = ""
 edition = "2021"
-rust-version = "1.59"
 exclude = ["/examples"]
+name = "tauri-plugin-rrai-storage"
+rust-version = "1.59"
+version = "0.0.1"
 
 [dependencies]
-tauri = { version = "1.2.2" }
+tauri = {version = "1.2.2", features = ["api-all", "macos-private-api", "process-command-api"]}
 
 anyhow = "1.0"
-thiserror = "1.0.40"
 bytes = "1.2"
 futures = "0.3"
+thiserror = "1.0.40"
 
-tracing = "0.1.15"
-tracing-subscriber = { version = "0.3", features = ["fmt"] }
-serde = { version = "1.0", features = ["derive"] }
+serde = {version = "1.0", features = ["derive"]}
 serde_json = "1.0"
+tracing = "0.1.15"
+tracing-subscriber = {version = "0.3", features = ["fmt"]}
 # rrai
-rrai-desktop-sdk-common = { version = "*", path = "../../crates/rrai-desktop-sdk-common" }
+rrai-desktop-sdk-common = {version = "*", path = "../../crates/rrai-desktop-sdk-common"}
