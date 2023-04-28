@@ -1,3 +1,6 @@
+mod dataset;
+mod meta;
+
 use tauri::{
     plugin::{Builder, TauriPlugin},
     Runtime,

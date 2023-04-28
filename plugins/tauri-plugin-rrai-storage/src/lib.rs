@@ -27,8 +27,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
                 tracing::debug!("IPFS:{}", line);
             }
         }
-    })
-    .expect("执行数据库脚本失败！");
+    });
     //
     tauri::async_runtime::block_on(async move {
         //判断是否启动 ipfs

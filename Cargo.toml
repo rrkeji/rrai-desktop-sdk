@@ -5,6 +5,7 @@ version = "0.1.0"
 
 [dependencies]
 rrai-desktop-sdk-common = { version = "*", path = "crates/rrai-desktop-sdk-common" }
+rrai-cloud-client = { version = "*", path = "crates/rrai-cloud-client" }
 tauri-plugin-rrai-idns = { version = "*", path = "plugins/tauri-plugin-rrai-idns" }
 tauri-plugin-rrai-appbox = { version = "*", path = "plugins/tauri-plugin-rrai-appbox" }
 tauri-plugin-rrai-storage = { version = "*", path = "plugins/tauri-plugin-rrai-storage" }
@@ -14,6 +15,7 @@ tauri-plugin-rrai-substrate = { version = "*", path = "plugins/tauri-plugin-rrai
 [workspace]
 members = [
   "crates/rrai-desktop-sdk-common",
+  "crates/rrai-cloud-client",
   "plugins/tauri-plugin-rrai-idns",
   "plugins/tauri-plugin-rrai-sqlite",
   "plugins/tauri-plugin-rrai-storage",
