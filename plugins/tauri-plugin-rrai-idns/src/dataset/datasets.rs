@@ -1,0 +1,77 @@
+use anyhow::Result;
+use serde_json::json;
+
+pub async fn dataset_rows(
+    token: &String,
+    dataset_id: &String,
+    parts: Option<String>,
+    page_size: u32,
+    page: u32,
+) -> Result<String> {
+    let url = format!("/dataset/rows/search");
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+
+    let request_obj = json!({
+        "page_size": page_size,
+        "page": page,
+        "conditions": {
+            "dataset_id": dataset_id.clone(),
+            "parts": parts,
+        }
+    })
+    .to_string();
+    tracing::debug!("request:{:?}", request_obj);
+
+    let res = crate::request::rrai_cloud_post(&url, token, request_obj).await?;
+    Ok(res)
+}
+
+pub async fn insert_dataset_row(
+    token: &String,
+    dataset_id: &String,
+    row_cid: &String,
+    parts: &String,
+) -> Result<String> {
+    let url = format!("/dataset/rows/create");
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+
+    let request_obj = json!({
+        "dataset_id": dataset_id.clone(),
+        "row_cid": row_cid.clone(),
+        "parts":  parts.clone()
+    })
+    .to_string();
+    tracing::debug!("request:{:?}", request_obj);
+
+    let res = crate::request::rrai_cloud_post(&url, token, request_obj).await?;
+    Ok(res)
+}
+
+pub async fn update_dataset_row(
+    token: &String,
+    id: u32,
+    row_cid: &String,
+    parts: &String,
+) -> Result<String> {
+    let url = format!("/dataset/rows/update/{}", id);
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+
+    let request_obj = json!({
+        "row_cid": row_cid.clone(),
+        "parts":  parts.clone()
+    })
+    .to_string();
+    tracing::debug!("request:{:?}", request_obj);
+
+    let res = crate::request::rrai_cloud_post(&url, token, request_obj).await?;
+    Ok(res)
+}
+
+pub async fn remove_dataset_row(token: &String, id: u32) -> Result<String> {
+    let url = format!("/dataset/rows/remove/{}", id);
+    let res = crate::request::rrai_cloud_get(&url, token).await?;
+    Ok(res)
+}

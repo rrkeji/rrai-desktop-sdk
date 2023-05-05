@@ -10,11 +10,6 @@ use tauri::{
 use rrai_desktop_sdk_common::ipfs::ipfs_get_content;
 use rrai_desktop_sdk_common::utils::rrai_home_path;
 
-#[command]
-pub async fn open_with_flags(path: String, iflags: i32) -> crate::Result<bool> {
-    Ok(true)
-}
-
 /// 下载应用
 #[command]
 pub async fn download(application_id: String, application_cid: String) -> crate::Result<()> {
