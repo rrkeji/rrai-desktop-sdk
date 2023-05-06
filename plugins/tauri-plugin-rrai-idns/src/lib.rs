@@ -6,7 +6,7 @@ mod request;
 
 use tauri::{
     plugin::{Builder, TauriPlugin},
-    Runtime,
+    Manager, Runtime,
 };
 
 /// Initializes the plugin.
@@ -18,8 +18,13 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             handlers::schema_by_model,
             handlers::insert_dataset_row,
             handlers::update_dataset_row,
+            handlers::query_dataset_row,
             handlers::remove_dataset_row,
             handlers::dataset_rows,
         ])
+        .setup(|app| {
+            app.manage(handlers::ContextState::default());
+            Ok(())
+        })
         .build()
 }

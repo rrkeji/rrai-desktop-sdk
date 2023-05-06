@@ -31,3 +31,5 @@ futures-util = "0.3"
 
 # rrai
 rrai-desktop-sdk-common = { version = "*", path = "../../crates/rrai-desktop-sdk-common" }
+mime_guess = "2.0.4"
+mime = "0.3.17"

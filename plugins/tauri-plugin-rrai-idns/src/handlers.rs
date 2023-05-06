@@ -43,10 +43,10 @@ pub async fn get_context_value(state: State<'_, ContextState>, key: String) -> R
         .lock()
         .map_err(|err| anyhow::anyhow!("获取锁失败！"))?;
 
-    map.get(&key)
-        .map_or(Err(Error::Anyhow(anyhow::anyhow!("没有找到"))), |v| {
-            Ok(v.clone())
-        })
+    map.get(&key).map_or(
+        Err(Error::Anyhow(anyhow::anyhow!("没有找到:{}", key))),
+        |v| Ok(v.clone()),
+    )
 }
 
 /// 通过模型和版本号获取schema
@@ -63,9 +63,10 @@ pub async fn schema_by_model(
             .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
         let token = context
             .get(&String::from(crate::constants::TOKEN_KEY))
-            .map_or(Err(Error::Anyhow(anyhow::anyhow!("没有找到"))), |v| {
-                Ok(v.clone())
-            })?;
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
         token
     };
 
@@ -90,9 +91,10 @@ pub async fn dataset_rows(
             .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
         let token = context
             .get(&String::from(crate::constants::TOKEN_KEY))
-            .map_or(Err(Error::Anyhow(anyhow::anyhow!("没有找到"))), |v| {
-                Ok(v.clone())
-            })?;
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
         token
     };
     //
@@ -115,9 +117,10 @@ pub async fn insert_dataset_row(
             .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
         let token = context
             .get(&String::from(crate::constants::TOKEN_KEY))
-            .map_or(Err(Error::Anyhow(anyhow::anyhow!("没有找到"))), |v| {
-                Ok(v.clone())
-            })?;
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
         token
     };
     //
@@ -141,9 +144,10 @@ pub async fn update_dataset_row(
         )?;
         let token = context
             .get(&String::from(crate::constants::TOKEN_KEY))
-            .map_or(Err(Error::Anyhow(anyhow::anyhow!("没有找到"))), |v| {
-                Ok(v.clone())
-            })?;
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
         token
     };
     //
@@ -160,12 +164,38 @@ pub async fn remove_dataset_row(state: State<'_, ContextState>, id: u32) -> Resu
             .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
         let token = context
             .get(&String::from(crate::constants::TOKEN_KEY))
-            .map_or(Err(Error::Anyhow(anyhow::anyhow!("没有找到"))), |v| {
-                Ok(v.clone())
-            })?;
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
         token
     };
     //
     let res = crate::dataset::remove_dataset_row(&token, id).await?;
+    Ok(res)
+}
+
+/// 插入数据集中的数据
+#[command]
+pub async fn query_dataset_row(
+    state: State<'_, ContextState>,
+    dataset_id: String,
+    id: u32,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::dataset::query_dataset_row(&token, &dataset_id, id).await?;
     Ok(res)
 }

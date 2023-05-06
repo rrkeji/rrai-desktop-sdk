@@ -27,6 +27,14 @@ pub async fn dataset_rows(
     Ok(res)
 }
 
+pub async fn query_dataset_row(token: &String, dataset_id: &String, id: u32) -> Result<String> {
+    let url = format!("/dataset/rows/get/{}", id);
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+    let res = crate::request::rrai_cloud_get(&url, token).await?;
+    Ok(res)
+}
+
 pub async fn insert_dataset_row(
     token: &String,
     dataset_id: &String,

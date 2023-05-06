@@ -1,28 +1,20 @@
 use anyhow::{anyhow, Context, Result};
 use serde::{Serialize, Serializer};
 use std::{collections::HashMap, sync::Mutex};
-use tauri::{
-    command,
-    plugin::{Builder, TauriPlugin},
-    Manager, Runtime, State,
-};
 
 use rrai_desktop_sdk_common::ipfs::ipfs_get_content;
-use rrai_desktop_sdk_common::utils::rrai_home_path;
 
 /// 下载应用
-#[command]
-pub async fn download(application_id: String, application_cid: String) -> crate::Result<()> {
-    //
+pub async fn rrapp_download(application_cid: &String) -> Result<bool> {
+    //TODO 先查看文件信息，太大不下载
+
     //下载cid对应的zip文件
-    let conent_vec = ipfs_get_content(&application_cid)
+    let conent_vec = ipfs_get_content(application_cid)
         .await
         .context("ipfs下载文件")?;
 
     //静态文件路径
-    let storage_path = rrai_home_path()?
-        .join("webroot/apps")
-        .join(application_id.replace(":", "_"));
+    let storage_path = crate::rrapp::get_rrapp_path(application_cid)?;
 
     std::fs::create_dir_all(storage_path.as_path())
         .map_err(|err| anyhow!("目录创建失败:{:?}-{}", storage_path, err))?;
@@ -33,5 +25,5 @@ pub async fn download(application_id: String, application_cid: String) -> crate:
         storage_path.to_str().ok_or(anyhow!(""))?,
     )?;
 
-    Ok(())
+    Ok(true)
 }
