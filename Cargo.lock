@@ -4115,6 +4115,8 @@ dependencies = [
  "bytes",
  "futures",
  "futures-util",
+ "mime",
+ "mime_guess",
  "rrai-desktop-sdk-common",
  "serde",
  "tauri",
