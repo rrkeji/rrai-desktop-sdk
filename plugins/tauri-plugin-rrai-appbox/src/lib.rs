@@ -16,9 +16,18 @@ pub fn rrapp_protocol<R: Runtime>(
 ) -> std::result::Result<HttpResponse, Box<dyn std::error::Error>> {
     let url: Url = request.uri().parse()?;
 
-    let app_cid = url
-        .host_str()
-        .map_or(Err(anyhow::anyhow!("不合法的URL")), |host| Ok(host))?;
+    let mut app_cid = String::new();
+
+    let _query_pairs = url
+        .query_pairs()
+        .into_iter()
+        .map(|pair| {
+            if pair.0 == "_cid" {
+                app_cid = String::from(pair.1.clone());
+            }
+            (String::from(pair.0), String::from(pair.1))
+        })
+        .collect::<Vec<(String, String)>>();
 
     //app_cid 即为内容ID，为下载应用的路径中的一部分
     tracing::debug!("请求地址:{}", url);
@@ -30,7 +39,7 @@ pub fn rrapp_protocol<R: Runtime>(
     } else {
         String::from(&url[1..])
     };
-    if file_path == ""{
+    if file_path == "" {
         file_path = String::from("index.html");
     }
     //组装文件路径
