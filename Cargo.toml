@@ -11,6 +11,7 @@ tauri-plugin-rrai-appbox = { version = "*", path = "plugins/tauri-plugin-rrai-ap
 tauri-plugin-rrai-storage = { version = "*", path = "plugins/tauri-plugin-rrai-storage" }
 tauri-plugin-rrai-sqlite = { version = "*", path = "plugins/tauri-plugin-rrai-sqlite" }
 tauri-plugin-rrai-substrate = { version = "*", path = "plugins/tauri-plugin-rrai-substrate" }
+tauri-plugin-rrai-ability = { version = "*", path = "plugins/tauri-plugin-rrai-ability" }
 
 [workspace]
 members = [
@@ -21,4 +22,5 @@ members = [
   "plugins/tauri-plugin-rrai-storage",
   "plugins/tauri-plugin-rrai-substrate",
   "plugins/tauri-plugin-rrai-appbox",
+  "plugins/tauri-plugin-rrai-ability",
 ]

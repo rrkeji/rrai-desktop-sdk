@@ -3,6 +3,7 @@ mod dataset;
 mod handlers;
 mod meta;
 mod request;
+mod task;
 
 use tauri::{
     plugin::{Builder, TauriPlugin},
@@ -21,6 +22,9 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             handlers::query_dataset_row,
             handlers::remove_dataset_row,
             handlers::dataset_rows,
+            handlers::tasks_task_publish,
+            handlers::tasks_task_take,
+            handlers::tasks_task_process_result,
         ])
         .setup(|app| {
             app.manage(handlers::ContextState::default());

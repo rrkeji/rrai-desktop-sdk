@@ -199,3 +199,105 @@ pub async fn query_dataset_row(
     let res = crate::dataset::query_dataset_row(&token, &dataset_id, id).await?;
     Ok(res)
 }
+
+/// 发布任务
+#[command]
+pub async fn tasks_task_publish(
+    state: State<'_, ContextState>,
+    name: String,
+    task_type: String,
+    model: String,
+    model_args: String,
+    description: String,
+    assign_strategy: String,
+    reward: u32,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::task::tasks_task_publish(
+        &token,
+        &name,
+        &task_type,
+        &model,
+        &model_args,
+        &description,
+        &assign_strategy,
+        reward,
+    )
+    .await?;
+    Ok(res)
+}
+
+/// 获取任务
+#[command]
+pub async fn tasks_task_take(
+    state: State<'_, ContextState>,
+    peer_id: String,
+    env: String,
+    abilities: Vec<String>,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::task::tasks_task_take(&token, &peer_id, &env, &abilities).await?;
+    Ok(res)
+}
+
+/// 获取任务
+#[command]
+pub async fn tasks_task_process_result(
+    state: State<'_, ContextState>,
+    task_id: u32,
+    process_id: u32,
+    progress: u16,
+    result_code: u16,
+    result: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::task::tasks_task_process_result(
+        &token,
+        task_id,
+        process_id,
+        progress,
+        result_code,
+        &result,
+    )
+    .await?;
+    Ok(res)
+}
