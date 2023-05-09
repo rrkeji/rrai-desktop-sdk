@@ -6,7 +6,6 @@ use serde_json::{json, Value};
 
 use crate::models::AbilityEntity;
 
-pub async fn auto_scan() {}
 
 //----------------------------------------------
 const TABLE_NAME: &str = "rrai_abilities";

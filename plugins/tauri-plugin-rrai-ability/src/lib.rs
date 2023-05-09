@@ -22,6 +22,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
 
     Builder::new("rrai-ability")
         .invoke_handler(tauri::generate_handler![
+            handlers::auto_scan,
             handlers::list_abilities,
             handlers::insert_ability,
             handlers::update_ability,

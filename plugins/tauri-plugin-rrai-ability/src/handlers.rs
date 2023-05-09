@@ -24,7 +24,8 @@ type Result<T> = std::result::Result<T, Error>;
 
 /// 下载应用
 #[command]
-pub async fn rrapp_download(application_cid: String) -> Result<bool> {
+pub async fn auto_scan() -> Result<bool> {
+    let _ = crate::abilities::auto_scan().await?;
     Ok(true)
 }
 
