@@ -8,7 +8,8 @@ CREATE TABLE rrai_abilities (
     `category` TEXT DEFAULT '',
     `settings` TEXT DEFAULT '',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(`ability`, `version`) ON CONFLICT REPLACE
 );
 
 CREATE TRIGGER rrai_abilities_updated AFTER UPDATE ON rrai_abilities 
