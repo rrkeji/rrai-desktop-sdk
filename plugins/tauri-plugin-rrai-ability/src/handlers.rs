@@ -22,10 +22,17 @@ impl Serialize for Error {
 
 type Result<T> = std::result::Result<T, Error>;
 
-/// 下载应用
+/// 自动扫描
 #[command]
 pub async fn auto_scan() -> Result<bool> {
     let _ = crate::abilities::auto_scan().await?;
+    Ok(true)
+}
+
+/// 能力扫描
+#[command]
+pub async fn ability_scan(ability: String) -> Result<bool> {
+    let _ = crate::abilities::ability_scan(&ability).await?;
     Ok(true)
 }
 
@@ -63,6 +70,12 @@ pub async fn update_ability(
         settings,
     )
     .await?;
+    Ok(res)
+}
+
+#[command]
+pub async fn update_ability_settings(ability: String, settings: String) -> Result<usize> {
+    let res = crate::abilities::update_ability_settings(&ability, &settings).await?;
     Ok(res)
 }
 

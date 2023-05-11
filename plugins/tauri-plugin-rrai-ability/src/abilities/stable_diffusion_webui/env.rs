@@ -17,21 +17,13 @@ pub async fn is_available() -> Result<(bool, String)> {
 pub async fn scan_and_insert() -> Result<()> {
     let (available, version) = is_available().await?;
 
-    crate::abilities::abilities_service::insert_ability(AbilityEntity {
-        id: 0,
-        is_available: if available { 1 } else { 0 },
-        ability: String::from("StableDiffusionWebUI"),
-        version: String::from("1.0"),
-        icon: String::from(
-            "https://www.docker.com/wp-content/uploads/2023/04/cropped-Docker-favicon-32x32.png",
-        ),
-        dependencies: String::from(""),
-        category: String::from(""),
-        settings: String::from("{}"),
-        created_at: 0,
-        updated_at: 0,
-    })
+    crate::abilities::abilities_service::insert_or_update_ability(
+        &String::from("StableDiffusionWebUI"),
+        if available { 1 } else { 0 },
+        &String::from(""),
+        &version,
+        &String::from(""),
+    )
     .await?;
-
     Ok(())
 }

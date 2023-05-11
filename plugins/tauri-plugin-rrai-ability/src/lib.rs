@@ -16,16 +16,19 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
     tauri::async_runtime::block_on(async move {
         //执行数据库脚本
         tracing::debug!("执行数据库脚本");
-        migration::init_database().await
+        let _ = migration::init_database().await;
+        crate::abilities::auto_scan().await
     })
     .expect("执行数据库脚本失败！");
 
     Builder::new("rrai-ability")
         .invoke_handler(tauri::generate_handler![
             handlers::auto_scan,
+            handlers::ability_scan,
             handlers::list_abilities,
             handlers::insert_ability,
             handlers::update_ability,
+            handlers::update_ability_settings,
             handlers::delete_ability,
         ])
         .setup(|app| {

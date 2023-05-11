@@ -17,18 +17,13 @@ pub async fn is_available() -> Result<(bool, String)> {
 pub async fn scan_and_insert() -> Result<()> {
     let (available, version) = is_available().await?;
 
-    crate::abilities::abilities_service::insert_ability(AbilityEntity {
-        id: 0,
-        is_available: if available { 1 } else { 0 },
-        ability: String::from("Python"),
-        version: version,
-        icon: String::from("https://docs.python.org/3/_static/py.svg"),
-        dependencies: String::from(""),
-        category: String::from(""),
-        settings: String::from("{}"),
-        created_at: 0,
-        updated_at: 0,
-    })
+    crate::abilities::abilities_service::insert_or_update_ability(
+        &String::from("Python"),
+        if available { 1 } else { 0 },
+        &String::from(""),
+        &version,
+        &String::from(""),
+    )
     .await?;
 
     Ok(())
