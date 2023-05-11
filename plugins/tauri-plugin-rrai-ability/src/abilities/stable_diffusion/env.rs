@@ -1,5 +1,6 @@
 use crate::{models::AbilityEntity, utils::execute_command};
 use anyhow::{anyhow, Result};
+use serde_json::Value;
 
 pub async fn is_available() -> Result<(bool, String)> {
     //读取配置
@@ -9,22 +10,28 @@ pub async fn is_available() -> Result<(bool, String)> {
     .await?;
 
     //
-    let settings = ability.get(&String::from("settings"));
-
-    //json 解析
-
-    //获取到model_path
-    
-    //
-    if let (Some(code), message) = execute_command(&String::from("docker version")).await? {
-        if code == 0 {
-            Ok((true, message))
-        } else {
-            Ok((false, message))
+    if let Some(Value::String(settings)) = ability.get(&String::from("settings")) {
+        //json 解析
+        if let Value::Object(settings_values) = serde_json::from_str(settings.as_str())? {
+            //获取到
+            if let Value::String(path_str) = settings_values
+                .get(&String::from("model_path"))
+                .map_or(Err(anyhow!("")), |path| Ok(path))?
+            {
+                // path_str
+                tracing::debug!("model_path:{}", path_str)
+            }
+            //
+            // if let (Some(code), message) = execute_command(&String::from("docker version")).await? {
+            //     if code == 0 {
+            //         Ok((true, message))
+            //     } else {
+            //         Ok((false, message))
+            //     }
+            // }
         }
-    } else {
-        Err(anyhow!(""))
     }
+    Ok((true, String::new()))
 }
 
 pub async fn scan_and_insert() -> Result<()> {
