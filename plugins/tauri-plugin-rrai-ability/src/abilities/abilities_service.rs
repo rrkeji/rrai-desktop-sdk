@@ -1,4 +1,4 @@
-use std::{collections::HashMap, f32::consts::E};
+use std::collections::HashMap;
 
 use anyhow::{anyhow, Result};
 use rrai_desktop_sdk_common::sqlite::{execute, execute_batch, query_with_args};
@@ -65,17 +65,15 @@ pub async fn insert_or_update_ability(
     is_available: u32,
     version: &String,
     version_infor: &String,
-    settings: &String,
 ) -> Result<usize> {
     let res = execute(
         &crate::constants::ABILITIES_DATABASE_NAME.to_string(),
-        &format!("UPDATE {} SET is_available = :is_available, version=:version, version_infor=:version_infor, settings=:settings WHERE ability = :ability", TABLE_NAME),
+        &format!("UPDATE {} SET is_available = :is_available, version=:version, version_infor=:version_infor WHERE ability = :ability", TABLE_NAME),
         &json!({
             ":is_available": is_available,
             ":ability":  ability.clone(),
             ":version":    version.clone(),
             ":version_infor": version_infor.clone(),
-            ":settings":  settings.clone(),
         }),
     )
     .await?;
@@ -136,4 +134,23 @@ pub async fn delete_ability(id: u32) -> Result<usize> {
     )
     .await?;
     Ok(res)
+}
+
+pub async fn query_ability_settings(ability: &String) -> Result<HashMap<String, Value>> {
+    //查询该能力
+    let ability = crate::abilities::abilities_service::query_by_ability(ability).await?;
+
+    //
+    if let Some(Value::String(settings)) = ability.get(&String::from("settings")) {
+        //json 解析
+        if let Value::Object(settings_values) = serde_json::from_str(settings.as_str())? {
+            let mut res = HashMap::new();
+
+            for (key, value) in settings_values {
+                res.insert(key.clone(), value.clone());
+            }
+            return Ok(res);
+        }
+    }
+    return Ok(HashMap::new());
 }

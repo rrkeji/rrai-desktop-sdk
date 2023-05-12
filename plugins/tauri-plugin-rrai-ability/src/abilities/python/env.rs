@@ -22,7 +22,6 @@ pub async fn scan_and_insert() -> Result<()> {
         if available { 1 } else { 0 },
         &String::from(""),
         &version,
-        &String::from(""),
     )
     .await?;
 

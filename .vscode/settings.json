@@ -1,6 +1,10 @@
 {
     "rust-analyzer.linkedProjects": [
         "./plugins/tauri-plugin-rrai-ability/Cargo.toml",
+        "./plugins/tauri-plugin-rrai-ability/Cargo.toml",
+        "./plugins/tauri-plugin-rrai-ability/Cargo.toml",
+        "./plugins/tauri-plugin-rrai-ability/Cargo.toml",
         "./plugins/tauri-plugin-rrai-ability/Cargo.toml"
-    ]
+    ],
+    "rust-analyzer.showUnlinkedFileNotification": false
 }

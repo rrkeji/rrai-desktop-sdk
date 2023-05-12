@@ -4,6 +4,7 @@ mod handlers;
 mod migration;
 mod models;
 mod utils;
+mod workspaces;
 
 use tauri::{
     plugin::{Builder, TauriPlugin},
@@ -16,8 +17,8 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
     tauri::async_runtime::block_on(async move {
         //执行数据库脚本
         tracing::debug!("执行数据库脚本");
-        let _ = migration::init_database().await;
-        crate::abilities::auto_scan().await
+        let res = migration::init_database().await;
+        res
     })
     .expect("执行数据库脚本失败！");
 
