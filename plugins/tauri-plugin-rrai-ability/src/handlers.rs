@@ -36,6 +36,13 @@ pub async fn ability_scan(ability: String) -> Result<bool> {
     Ok(true)
 }
 
+/// 执行任务
+#[command]
+pub async fn perform_task(ability: String, args: String) -> Result<bool> {
+    let _ = crate::abilities::perform_task(&ability).await?;
+    Ok(true)
+}
+
 #[command]
 pub async fn list_abilities() -> Result<Vec<HashMap<String, Value>>> {
     let files = crate::abilities::list_abilities().await?;

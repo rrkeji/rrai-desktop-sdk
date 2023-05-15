@@ -26,6 +26,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         .invoke_handler(tauri::generate_handler![
             handlers::auto_scan,
             handlers::ability_scan,
+            handlers::perform_task,
             handlers::list_abilities,
             handlers::insert_ability,
             handlers::update_ability,

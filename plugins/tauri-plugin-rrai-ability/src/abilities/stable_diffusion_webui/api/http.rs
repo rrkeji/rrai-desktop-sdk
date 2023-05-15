@@ -32,28 +32,38 @@ pub async fn text2image() -> Result<String> {
       ], // 一般用于lora模型或其他插件参数，如示例，我放入了一个lora模型， 1，1为两个权重值，一般只用到前面的权重值1
      "sampler_index": "Euler" //采样方法
         });
-    webui_post("/sdapi/v1/txt2img", json_obj.to_string()).await;
+    webui_post("/sdapi/v1/txt2img", json_obj.to_string()).await
 }
 
 /// 图片生图 POST /sdapi/v1/img2img
-pub async fn image2image() -> Result<String> {}
+pub async fn image2image() -> Result<String> {
+    let json_obj = json!({});
+    webui_post("/sdapi/v1/txt2img", json_obj.to_string()).await
+}
 
 /// 获取设置 GET /sdapi/v1/options
-pub async fn get_options() -> Result<String> {}
+pub async fn get_options() -> Result<String> {
+    webui_get("/sdapi/v1/txt2img").await
+}
 
 /// 获取设置 POST（可用来更新远端的模型） /sdapi/v1/options
-pub async fn update_options() -> Result<String> {}
+pub async fn update_options() -> Result<String> {
+    let json_obj = json!({});
+    webui_post("/sdapi/v1/txt2img", json_obj.to_string()).await
+}
 
 /// 获取所有的模型 GET /sdapi/v1/sd-models
-pub async fn get_sd_models() -> Result<String> {}
+pub async fn get_sd_models() -> Result<String> {
+    webui_get("/sdapi/v1/txt2img").await
+}
 
-async fn webui_get(path: &String, token: &String) -> Result<String> {
+async fn webui_get(path: &str) -> Result<String> {
     //
     let https = HttpsConnector::new();
     //构建Https Client
     let client = Client::builder().build::<_, hyper::Body>(https);
 
-    let url = format!("{}{}", crate::constants::RRAI_CLOUD_URL, path.clone(),);
+    let url = format!("{}{}", "http://127.0.0.1:7860", path.clone(),);
     //请求的URL
     tracing::debug!("请求的URL:{}", url);
 
@@ -61,7 +71,6 @@ async fn webui_get(path: &String, token: &String) -> Result<String> {
     let request = Request::builder()
         .uri(url.as_str())
         .method("GET")
-        .header("Authorization", token.clone())
         .body(Body::from(""))
         .map_err(|err| {
             tracing::error!("调用{}接口封装request:{:?}", url, err);
@@ -88,7 +97,7 @@ async fn webui_post(path: &str, request_obj: String) -> Result<String> {
     //构建Https Client
     let client = Client::builder().build::<_, hyper::Body>(https);
 
-    let url = format!("{}{}", crate::constants::RRAI_CLOUD_URL, path.clone(),);
+    let url = format!("{}{}", "http://127.0.0.1:7860", path.clone(),);
     //请求的URL
     tracing::debug!("请求的URL:{}", url);
 
