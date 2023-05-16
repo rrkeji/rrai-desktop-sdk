@@ -1,4 +1,7 @@
-use crate::{models::AbilityEntity, utils::execute_command};
+use crate::{
+    models::AbilityEntity,
+    utils::{async_execute_command, execute_command},
+};
 use anyhow::{anyhow, Result};
 use serde_json::Value;
 use tera::{Context, Tera};
@@ -50,7 +53,7 @@ pub async fn perform_test() -> Result<String> {
     }
 }
 
-pub async fn perform_task() -> Result<String> {
+pub async fn perform_task(args: &String) -> Result<String> {
     //获取配置信息
     let settings_values = crate::abilities::abilities_service::query_ability_settings(
         &String::from(crate::constants::STABLE_DIFFUSION_ABILITY_NAME),
@@ -64,12 +67,14 @@ pub async fn perform_task() -> Result<String> {
     {
         // path_str
         tracing::debug!("model_path:{}", path_str);
+        //args 反序列化
+        let args_value: Value = serde_json::from_str(args)?;
 
-        let mut context = Context::new();
+        let mut context = Context::from_value(args_value)?;
         context.insert("model_path", &path_str);
 
-        let code = Tera::one_off(include_str!("test_main.py"), &context, false)
-            .map_err(|err| anyhow!(err))?;
+        let code =
+            Tera::one_off(include_str!("main.py"), &context, false).map_err(|err| anyhow!(err))?;
 
         //创建目录,并写入文件
         let workspace_id = crate::workspaces::create_by_file("main.py", &code).await?;
@@ -81,17 +86,9 @@ pub async fn perform_task() -> Result<String> {
 
         tracing::debug!("test_command:{}", test_command);
         //
-        if let (Some(code), message) = execute_command(&test_command).await? {
-            if code == 0 {
-                tracing::debug!("测试成功");
-
-                Ok(message)
-            } else {
-                Err(anyhow!("测试执行返回非0:{}", code))
-            }
-        } else {
-            Err(anyhow!("测试执行异常!"))
-        }
+        let running_id = async_execute_command(&test_command).await?;
+        tracing::debug!("返回执行命令的id:{}", running_id);
+        Ok(running_id)
     } else {
         Err(anyhow!("没有配置信息"))
     }

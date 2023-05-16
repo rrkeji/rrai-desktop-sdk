@@ -38,9 +38,33 @@ pub async fn ability_scan(ability: String) -> Result<bool> {
 
 /// 执行任务
 #[command]
-pub async fn perform_task(ability: String, args: String) -> Result<bool> {
-    let _ = crate::abilities::perform_task(&ability).await?;
-    Ok(true)
+pub async fn perform_task(ability: String, args: String) -> Result<String> {
+    let res = crate::abilities::perform_task(&ability, &args).await?;
+    Ok(res)
+}
+
+/// 任务的输出
+#[command]
+pub async fn perform_task_stdout(
+    ability: String,
+    running_task_id: String,
+    max_line_size: u16,
+) -> Result<(bool, i32, String)> {
+    let res =
+        crate::abilities::perform_task_stdout(&ability, &running_task_id, max_line_size).await?;
+    Ok(res)
+}
+
+/// 任务的状态
+#[command]
+pub async fn perform_task_status(
+    ability: String,
+    running_task_id: String,
+    exit_remove: bool,
+) -> Result<(bool, i32)> {
+    let res =
+        crate::abilities::perform_task_status(&ability, &running_task_id, exit_remove).await?;
+    Ok(res)
 }
 
 #[command]
