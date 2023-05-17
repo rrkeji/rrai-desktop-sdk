@@ -3,6 +3,7 @@ mod constants;
 mod handlers;
 mod migration;
 mod models;
+mod tasks;
 mod utils;
 mod workspaces;
 
@@ -27,6 +28,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             handlers::auto_scan,
             handlers::ability_scan,
             handlers::perform_task_stdout,
+            handlers::perform_task_stderr,
             handlers::perform_task_status,
             handlers::perform_task,
             handlers::list_abilities,

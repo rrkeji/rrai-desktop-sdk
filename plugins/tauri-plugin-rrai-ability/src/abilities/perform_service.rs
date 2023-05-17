@@ -1,4 +1,4 @@
-use crate::utils::{running_command_status, running_command_stdout};
+use crate::tasks::{running_command_status, running_command_stderr, running_command_stdout};
 use anyhow::{anyhow, Result};
 /// 自动扫描
 pub async fn perform_task(ability: &String, args: &String) -> Result<String> {
@@ -15,9 +15,15 @@ pub async fn perform_task(ability: &String, args: &String) -> Result<String> {
 pub async fn perform_task_stdout(
     _ability: &String,
     running_task_id: &String,
-    max_line_size: u16,
-) -> Result<(bool, i32, String)> {
-    running_command_stdout(running_task_id, max_line_size).await
+) -> Result<Vec<String>> {
+    running_command_stdout(running_task_id).await
+}
+
+pub async fn perform_task_stderr(
+    _ability: &String,
+    running_task_id: &String,
+) -> Result<Vec<String>> {
+    running_command_stderr(running_task_id).await
 }
 
 pub async fn perform_task_status(

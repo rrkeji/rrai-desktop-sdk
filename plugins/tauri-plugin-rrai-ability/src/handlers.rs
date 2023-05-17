@@ -45,13 +45,14 @@ pub async fn perform_task(ability: String, args: String) -> Result<String> {
 
 /// 任务的输出
 #[command]
-pub async fn perform_task_stdout(
-    ability: String,
-    running_task_id: String,
-    max_line_size: u16,
-) -> Result<(bool, i32, String)> {
-    let res =
-        crate::abilities::perform_task_stdout(&ability, &running_task_id, max_line_size).await?;
+pub async fn perform_task_stdout(ability: String, running_task_id: String) -> Result<Vec<String>> {
+    let res = crate::abilities::perform_task_stdout(&ability, &running_task_id).await?;
+    Ok(res)
+}
+/// 任务的错误输出
+#[command]
+pub async fn perform_task_stderr(ability: String, running_task_id: String) -> Result<Vec<String>> {
+    let res = crate::abilities::perform_task_stderr(&ability, &running_task_id).await?;
     Ok(res)
 }
 
