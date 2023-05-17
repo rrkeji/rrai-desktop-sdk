@@ -1,7 +1,11 @@
 mod files;
+mod rate_limiter;
+mod stdout_channel;
+
 pub mod zip;
 
 pub use files::*;
+pub use stdout_channel::*;
 
 use anyhow::{anyhow, Result};
 use std::path::PathBuf;

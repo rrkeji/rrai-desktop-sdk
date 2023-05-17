@@ -25,3 +25,4 @@ rusqlite = { version = "0.29.0", features = ["bundled"] }
 ipfs-api-backend-hyper = { version = "0.6", features = ["with-send-sync"] }
 
 tokio = { version = "1", features = ["full"] }
+deadqueue = "0.2.4"
