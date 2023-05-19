@@ -1,5 +1,3 @@
-mod create;
-mod delete;
+mod workspace;
 
-pub use create::*;
-pub use delete::*;
+pub use workspace::*;

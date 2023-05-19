@@ -25,9 +25,11 @@ pub async fn perform_test() -> Result<String> {
             .map_err(|err| anyhow!(err))?;
 
         //创建目录,并写入文件
-        let workspace_id = crate::workspaces::create_by_file("main.py", &code).await?;
+        let workspace = crate::workspaces::Workspace::create()?;
 
-        let workspace_path = crate::workspaces::workspace_path(&workspace_id).await?;
+        workspace.add_file("main.py", &code)?;
+
+        let workspace_path = workspace.path()?;
         tracing::debug!("workspace_path:{}", workspace_path);
 
         let test_command = format!("python3 {}{}", workspace_path, "/main.py");
@@ -67,20 +69,22 @@ pub async fn perform_task(args: &String) -> Result<String> {
         //args 反序列化
         let args_value: Value = serde_json::from_str(args)?;
 
+        let workspace = crate::workspaces::Workspace::create()?;
+        let workspace_path = workspace.path()?;
+        tracing::debug!("workspace_path:{}", workspace_path);
+
         let mut context = Context::from_value(args_value)?;
         context.insert("model_path", &path_str);
+        context.insert("workspace_path", &workspace_path);
 
         let code =
             Tera::one_off(include_str!("main.py"), &context, false).map_err(|err| anyhow!(err))?;
 
         //创建目录,并写入文件
-        let workspace_id = crate::workspaces::create_by_file("main.py", &code).await?;
-
-        let workspace_path = crate::workspaces::workspace_path(&workspace_id).await?;
-        tracing::debug!("workspace_path:{}", workspace_path);
+        workspace.add_file("main.py", &code)?;
+        workspace.mkdirs("outputs")?;
 
         let test_command = format!("python3 {}{}", workspace_path, "/main.py");
-
         tracing::debug!("test_command:{}", test_command);
         //
         let running_id = async_execute_command(&test_command).await?;

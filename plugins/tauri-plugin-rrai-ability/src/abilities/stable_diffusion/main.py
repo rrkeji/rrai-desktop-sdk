@@ -30,4 +30,4 @@ images = pipeline(
 ).images
 
 for i in range(len(images)):
-    images[i].save(f"./iamge_{i}.png")
+    images[i].save("{{workspace_path}}/outputs/iamge_%d.png" % (i))
