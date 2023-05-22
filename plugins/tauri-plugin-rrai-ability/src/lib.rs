@@ -4,6 +4,7 @@ mod handlers;
 mod migration;
 mod models;
 mod tasks;
+mod terminal;
 mod utils;
 mod workspaces;
 
@@ -27,15 +28,28 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         .invoke_handler(tauri::generate_handler![
             handlers::auto_scan,
             handlers::ability_scan,
-            handlers::perform_task_stdout,
-            handlers::perform_task_stderr,
             handlers::perform_task_status,
             handlers::perform_task,
+            //
             handlers::list_abilities,
             handlers::insert_ability,
             handlers::update_ability,
             handlers::update_ability_settings,
             handlers::delete_ability,
+            //
+            handlers::list_tasks,
+            handlers::list_local_tasks,
+            handlers::query_task_by_task_id,
+            handlers::query_task_status,
+            handlers::delete_task,
+            //
+            handlers::new_terminal,
+            handlers::terminal_execute_command,
+            handlers::terminal_stdout,
+            handlers::terminal_stderr,
+            handlers::terminal_status,
+            handlers::terminal_interrupt_command,
+            handlers::close_terminal,
         ])
         .setup(|app| {
             // app.manage(SqliteMap::default());

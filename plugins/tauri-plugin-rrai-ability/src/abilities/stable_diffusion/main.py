@@ -21,7 +21,6 @@ pipeline = DiffusionPipeline.from_pretrained("{{model_path}}")
 #     callback: Optional[Callable[[int, int, torch.FloatTensor], None]] = None,
 #     callback_steps: int = 1,
 
-
 images = pipeline(
     prompt="{{prompts}}",
     negative_prompt="{{negative_prompt}}",
@@ -30,4 +29,4 @@ images = pipeline(
 ).images
 
 for i in range(len(images)):
-    images[i].save("{{workspace_path}}/outputs/iamge_%d.png" % (i))
+    images[i].save("{{workspace_path}}/outputs/image_%d.png" % (i))

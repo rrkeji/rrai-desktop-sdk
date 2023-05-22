@@ -29,3 +29,27 @@ INSERT INTO rrai_abilities (`ability`,`ability_name`,`icon`,`category`,`dependen
     VALUES("StableDiffusion","StableDiffusion","","Cli",'["Python"]',"b773d7bbe28d46ed97cc9a73fae12241","");
 INSERT INTO rrai_abilities (`ability`,`ability_name`,`icon`,`category`,`dependencies`,`settings_schema`,`install_guide`) 
     VALUES("StableDiffusionWebUI","StableDiffusionWebUI","","Cli","","","");
+
+
+CREATE TABLE rrai_local_tasks (
+    `id` INTEGER PRIMARY KEY,
+    `task_id` TEXT DEFAULT '',
+    `ability` TEXT DEFAULT '',
+    `args` TEXT DEFAULT '',
+    `remote` INTEGER DEFAULT 0,
+    `remote_task_id` TEXT DEFAULT '',
+    `remote_server` TEXT DEFAULT 'https://rrai.idns.link/api',
+    `result_code` INTEGER DEFAULT 0,
+    `stdout` TEXT DEFAULT '',
+    `stderr` TEXT DEFAULT '',
+    `result` TEXT DEFAULT '',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(`task_id`) ON CONFLICT REPLACE
+);
+
+
+CREATE TRIGGER rrai_local_tasks_updated AFTER UPDATE ON rrai_local_tasks 
+BEGIN
+UPDATE rrai_local_tasks SET updated_at = CURRENT_TIMESTAMP WHERE id = new.id;
+END;

@@ -43,28 +43,10 @@ pub async fn perform_task(ability: String, args: String) -> Result<String> {
     Ok(res)
 }
 
-/// 任务的输出
-#[command]
-pub async fn perform_task_stdout(ability: String, running_task_id: String) -> Result<Vec<String>> {
-    let res = crate::abilities::perform_task_stdout(&ability, &running_task_id).await?;
-    Ok(res)
-}
-/// 任务的错误输出
-#[command]
-pub async fn perform_task_stderr(ability: String, running_task_id: String) -> Result<Vec<String>> {
-    let res = crate::abilities::perform_task_stderr(&ability, &running_task_id).await?;
-    Ok(res)
-}
-
 /// 任务的状态
 #[command]
-pub async fn perform_task_status(
-    ability: String,
-    running_task_id: String,
-    exit_remove: bool,
-) -> Result<(bool, i32)> {
-    let res =
-        crate::abilities::perform_task_status(&ability, &running_task_id, exit_remove).await?;
+pub async fn perform_task_status(task_id: String) -> Result<HashMap<String, Value>> {
+    let res = crate::abilities::perform_task_status(&task_id).await?;
     Ok(res)
 }
 
@@ -114,5 +96,85 @@ pub async fn update_ability_settings(ability: String, settings: String) -> Resul
 #[command]
 pub async fn delete_ability(id: u32) -> Result<usize> {
     let res = crate::abilities::delete_ability(id).await?;
+    Ok(res)
+}
+
+#[command]
+pub async fn list_tasks() -> Result<Vec<HashMap<String, Value>>> {
+    let files = crate::tasks::list_tasks().await?;
+    Ok(files)
+}
+
+#[command]
+pub async fn list_local_tasks(is_local: bool) -> Result<Vec<HashMap<String, Value>>> {
+    let files = crate::tasks::list_local_tasks(is_local).await?;
+    Ok(files)
+}
+
+///
+#[command]
+pub async fn query_task_by_task_id(task_id: String) -> Result<HashMap<String, Value>> {
+    let res = crate::tasks::query_by_task_id(&task_id).await?;
+    Ok(res)
+}
+
+///
+#[command]
+pub async fn query_task_status(task_id: String) -> Result<HashMap<String, Value>> {
+    let res = crate::tasks::query_task_status(&task_id).await?;
+    Ok(res)
+}
+
+#[command]
+pub async fn delete_task(task_id: String) -> Result<usize> {
+    let res = crate::tasks::delete_task(&task_id).await?;
+    Ok(res)
+}
+
+/// 新建终端
+#[command]
+pub async fn new_terminal(command: String) -> Result<String> {
+    let res = crate::terminal::async_execute_command(&command).await?;
+    Ok(res)
+}
+
+/// 终端执行命令
+#[command]
+pub async fn terminal_execute_command(terminal_id: String, command: String) -> Result<String> {
+    let res = crate::terminal::async_execute_command(&command).await?;
+    Ok(res)
+}
+
+/// 终端的输出
+#[command]
+pub async fn terminal_stdout(terminal_id: String) -> Result<Vec<String>> {
+    let res = crate::terminal::terminal_stdout(&terminal_id).await?;
+    Ok(res)
+}
+
+/// 终端的错误输出
+#[command]
+pub async fn terminal_stderr(terminal_id: String) -> Result<Vec<String>> {
+    let res = crate::terminal::terminal_stderr(&terminal_id).await?;
+    Ok(res)
+}
+
+/// 终端当前状态
+#[command]
+pub async fn terminal_status(terminal_id: String) -> Result<Vec<String>> {
+    let res = crate::terminal::terminal_stderr(&terminal_id).await?;
+    Ok(res)
+}
+/// 终端当前命令中断
+#[command]
+pub async fn terminal_interrupt_command(terminal_id: String) -> Result<Vec<String>> {
+    let res = crate::terminal::terminal_stderr(&terminal_id).await?;
+    Ok(res)
+}
+
+/// 关闭终端
+#[command]
+pub async fn close_terminal(terminal_id: String) -> Result<Vec<String>> {
+    let res = crate::terminal::terminal_stderr(&terminal_id).await?;
     Ok(res)
 }

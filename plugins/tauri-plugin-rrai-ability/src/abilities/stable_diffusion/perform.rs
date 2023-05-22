@@ -52,7 +52,7 @@ pub async fn perform_test() -> Result<String> {
     }
 }
 
-pub async fn perform_task(args: &String) -> Result<String> {
+pub async fn perform_task(task_id: &String, args: &String) -> Result<String> {
     //获取配置信息
     let settings_values = crate::abilities::abilities_service::query_ability_settings(
         &String::from(crate::constants::STABLE_DIFFUSION_ABILITY_NAME),
@@ -87,7 +87,8 @@ pub async fn perform_task(args: &String) -> Result<String> {
         let test_command = format!("python3 {}{}", workspace_path, "/main.py");
         tracing::debug!("test_command:{}", test_command);
         //
-        let running_id = async_execute_command(&test_command).await?;
+        let running_id = async_execute_command(task_id, &test_command).await?;
+
         tracing::debug!("返回执行命令的id:{}", running_id);
         Ok(running_id)
     } else {
