@@ -1,8 +1,10 @@
 use anyhow::{anyhow, Result};
+use futures::executor::block_on;
 use std::collections::HashMap;
+use std::future::Future;
 use std::io::Error as IoError;
 use std::io::{BufRead, Read};
-use std::process::{Child, Command, Stdio};
+use std::process::{Child, Command, Output, Stdio};
 use std::sync::{Arc, Mutex, RwLock};
 use thiserror::Error;
 use tokio::task::JoinError;
@@ -34,11 +36,12 @@ pub struct LocalProcessTask {
     pub stderr_task: Arc<Mutex<Option<StdoutTask>>>,
 }
 
-// type TaskCompletedHandle = FnOnce<(String)>;
-
 impl LocalProcessTask {
     /// 新建
-    pub async fn new(task_id: &String, command: &String) -> Result<Self> {
+    pub async fn new<T>(task_id: &String, command: &String, completed: T) -> Result<Self>
+    where
+        T: Future + Send + 'static,
+    {
         //
         let child = if cfg!(target_os = "windows") {
             Command::new("cmd")
@@ -80,7 +83,7 @@ impl LocalProcessTask {
                         child_stderr.lock().map_err(|err| anyhow!(""))?.try_wait()
                     {
                         //
-
+                        block_on(completed);
                         //
                         let mut cache = CURRENT_RUNNING_TASKS
                             .write()
@@ -116,8 +119,6 @@ impl LocalProcessTask {
                         child_stdout.lock().map_err(|err| anyhow!(""))?.try_wait()
                     {
                         //
-
-                        //
                         let mut cache = CURRENT_RUNNING_TASKS
                             .write()
                             .map_err(|err| anyhow!("获取锁失败:{}", err))?;
@@ -141,10 +142,17 @@ impl LocalProcessTask {
     }
 }
 
-pub async fn async_execute_command(task_id: &String, command: &String) -> Result<String> {
+pub async fn async_execute_command<T>(
+    task_id: &String,
+    command: &String,
+    completed: T,
+) -> Result<String>
+where
+    T: Future<Output = Result<()>> + Send + 'static,
+{
     tracing::debug!("async_execute_command方法调用:{} ", command);
     //新建
-    let task = LocalProcessTask::new(task_id, command).await?;
+    let task = LocalProcessTask::new(task_id, command, completed).await?;
     let task_id = task.id.clone();
 
     //

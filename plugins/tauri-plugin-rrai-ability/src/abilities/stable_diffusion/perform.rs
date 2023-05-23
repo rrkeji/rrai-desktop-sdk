@@ -1,7 +1,12 @@
-use crate::{models::AbilityEntity, tasks::async_execute_command, utils::execute_command};
+use crate::{
+    models::AbilityEntity,
+    tasks::{async_execute_command, update_task_status},
+    utils::execute_command,
+};
 use anyhow::{anyhow, Result};
-use serde_json::Value;
+use serde_json::{json, Value};
 use tera::{Context, Tera};
+use walkdir::{DirEntry, WalkDir};
 
 pub async fn perform_test() -> Result<String> {
     //获取配置信息
@@ -87,7 +92,23 @@ pub async fn perform_task(task_id: &String, args: &String) -> Result<String> {
         let test_command = format!("python3 {}{}", workspace_path, "/main.py");
         tracing::debug!("test_command:{}", test_command);
         //
-        let running_id = async_execute_command(task_id, &test_command).await?;
+        let task_id_temp = task_id.clone();
+        let workspace_id = workspace.id.clone();
+
+        let running_id = async_execute_command(task_id, &test_command, async move {
+            let workspace: crate::workspaces::Workspace =
+                crate::workspaces::Workspace::create_from_id(workspace_id.as_str())?;
+
+            //获取到outputs目录下的文件， 组装结果保存
+            let files = workspace.list_files("outputs")?;
+
+            let result = json!(files).to_string();
+            tracing::debug!("任务完成:{}", result);
+            //完成之后
+            update_task_status(&task_id_temp, 2, &result).await;
+            Ok(())
+        })
+        .await?;
 
         tracing::debug!("返回执行命令的id:{}", running_id);
         Ok(running_id)

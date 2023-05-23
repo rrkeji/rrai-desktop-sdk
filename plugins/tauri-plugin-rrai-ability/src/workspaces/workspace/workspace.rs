@@ -1,6 +1,8 @@
 use anyhow::{anyhow, Result};
 use std::io::Write;
 
+use walkdir::{DirEntry, WalkDir};
+
 pub struct Workspace {
     pub id: String,
 }
@@ -57,16 +59,33 @@ impl Workspace {
 
     ///添加文件
     pub fn mkdirs(&self, file_name: &str) -> Result<bool> {
-        //创建工程
+        //拼接路径
         let filename = rrai_desktop_sdk_common::utils::rrai_home_path()?
             .join(crate::constants::WORKSPACES_ROOT_PATH)
             .join(self.id.clone())
             .join(file_name);
 
-        //创建文件
+        //创建目录
         std::fs::create_dir_all(filename).map_err(|err| anyhow::anyhow!(err))?;
 
         Ok(true)
+    }
+
+    /// list files
+    pub fn list_files(&self, file_name: &str) -> Result<Vec<String>> {
+        //拼接路径
+        let filename = rrai_desktop_sdk_common::utils::rrai_home_path()?
+            .join(crate::constants::WORKSPACES_ROOT_PATH)
+            .join(self.id.clone())
+            .join(file_name);
+
+        Ok(WalkDir::new(filename)
+            .into_iter()
+            .filter_map(|v| v.ok().map_or(None, |entry|{
+                if entry.file_type().is_dir(){None}else{Some(entry)}
+            }))
+            .map(|x| format!("{}", x.path().display()))
+            .collect())
     }
 
     /// 获取工程的路径

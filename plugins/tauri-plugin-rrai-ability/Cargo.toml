@@ -34,6 +34,7 @@ deadqueue = "0.2"
 # rrai
 rrai-desktop-sdk-common = { version = "*", path = "../../crates/rrai-desktop-sdk-common" }
 stack-string = "0.8.0"
+walkdir = "2.3.3"
 
 [dependencies.uuid]
 features = [
