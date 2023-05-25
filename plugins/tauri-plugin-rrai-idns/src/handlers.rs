@@ -301,3 +301,185 @@ pub async fn tasks_task_process_result(
     .await?;
     Ok(res)
 }
+
+///  
+#[command]
+pub async fn ipfs_files_search(
+    state: State<'_, ContextState>,
+    page_size: u32,
+    page: u32,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::ipfs_files_search(&token, page_size, page).await?;
+    Ok(res)
+}
+
+///  
+#[command]
+pub async fn ipfs_files_create(
+    state: State<'_, ContextState>,
+    parent_id: u64,
+    cid: String,
+    is_pin: u16,
+    is_dir: u16,
+    file_name: String,
+    file_size: u32,
+    file_type: String,
+    avatar: String,
+    category: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::ipfs_files_create(&token, parent_id, &cid,is_pin,is_dir,&file_name,file_size,&file_type,&avatar,&category).await?;
+    Ok(res)
+}
+
+///  
+#[command]
+pub async fn ipfs_files_update(
+    state: State<'_, ContextState>,
+    id: u32,
+    file_name: String,
+    avatar: String,
+    category: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::ipfs_files_update(&token, id, &file_name,&avatar,&category).await?;
+    Ok(res)
+}
+
+///  
+#[command]
+pub async fn ipfs_files_remove(
+    state: State<'_, ContextState>,
+    id: u32,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::ipfs_files_remove(&token, id).await?;
+    Ok(res)
+}
+
+///  
+#[command]
+pub async fn ipfs_pins_status(
+    state: State<'_, ContextState>,
+    cid: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::ipfs_pins_status(&token, &cid).await?;
+    Ok(res)
+}
+
+
+///  
+#[command]
+pub async fn ipfs_pins_unpin(
+    state: State<'_, ContextState>,
+    cid: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::ipfs_pins_unpin(&token, &cid).await?;
+    Ok(res)
+}
+
+
+///  
+#[command]
+pub async fn ipfs_pins_pin(
+    state: State<'_, ContextState>,
+    cid: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::ipfs_pins_pin(&token, &cid).await?;
+    Ok(res)
+}

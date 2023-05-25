@@ -1,6 +1,7 @@
 mod constants;
 mod dataset;
 mod handlers;
+mod ipfs;
 mod meta;
 mod request;
 mod task;
@@ -25,6 +26,13 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             handlers::tasks_task_publish,
             handlers::tasks_task_take,
             handlers::tasks_task_process_result,
+            handlers::ipfs_files_search,
+            handlers::ipfs_files_create,
+            handlers::ipfs_files_update,
+            handlers::ipfs_files_remove,
+            handlers::ipfs_pins_status,
+            handlers::ipfs_pins_unpin,
+            handlers::ipfs_pins_pin,
         ])
         .setup(|app| {
             app.manage(handlers::ContextState::default());
