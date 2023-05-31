@@ -76,6 +76,44 @@ pub async fn ipfs_files_update(
     Ok(res)
 }
 
+pub async fn create_with_string_content(
+    token: &String,
+    paths: &Vec<String>,
+    content: &String,
+    file_type: &String,
+    file_name: &String,
+    category: &String,
+) -> Result<String> {
+    let url = format!("/ipfs/files/create_with_string_content");
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+
+    let request_obj = json!({
+        "path": paths,
+        "content": content,
+        "file_type": file_type,
+        "file_name": file_name.clone(),
+        "category":  category.clone()
+    })
+    .to_string();
+    tracing::debug!("request:{:?}", request_obj);
+
+    let res = crate::request::rrai_cloud_post(&url, token, request_obj).await?;
+    Ok(res)
+}
+
+pub async fn mkdirs(token: &String, paths: &Vec<String>) -> Result<String> {
+    let url = format!("/ipfs/files/mkdirs");
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+
+    let request_obj = json!(paths).to_string();
+    tracing::debug!("request:{:?}", request_obj);
+
+    let res = crate::request::rrai_cloud_post(&url, token, request_obj).await?;
+    Ok(res)
+}
+
 pub async fn ipfs_files_remove(token: &String, id: u32) -> Result<String> {
     let url = format!("/ipfs/files/remove/{}", id);
     let res = crate::request::rrai_cloud_get(&url, token).await?;

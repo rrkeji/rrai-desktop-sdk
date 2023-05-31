@@ -1,6 +1,14 @@
 use anyhow::Result;
 use serde_json::json;
 
+pub async fn dataset_create_by_model_id(token: &String, model_id: &String) -> Result<String> {
+    let url = format!("/dataset/datasets/create_by_model_id/{}", model_id);
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+    let res = crate::request::rrai_cloud_get(&url, token).await?;
+    Ok(res)
+}
+
 pub async fn dataset_rows(
     token: &String,
     dataset_id: &String,
@@ -27,6 +35,58 @@ pub async fn dataset_rows(
     Ok(res)
 }
 
+pub async fn dataset_rows_search_owned(
+    token: &String,
+    dataset_id: &String,
+    parts: Option<String>,
+    page_size: u32,
+    page: u32,
+) -> Result<String> {
+    let url = format!("/dataset/rows/search_owned");
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+
+    let request_obj = json!({
+        "page_size": page_size,
+        "page": page,
+        "conditions": {
+            "dataset_id": dataset_id.clone(),
+            "parts": parts,
+        }
+    })
+    .to_string();
+    tracing::debug!("request:{:?}", request_obj);
+
+    let res = crate::request::rrai_cloud_post(&url, token, request_obj).await?;
+    Ok(res)
+}
+
+pub async fn dataset_rows_search_by_model(
+    token: &String,
+    model_id: &String,
+    parts: Option<String>,
+    page_size: u32,
+    page: u32,
+) -> Result<String> {
+    let url = format!("/dataset/rows/search_by_model");
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+
+    let request_obj = json!({
+        "page_size": page_size,
+        "page": page,
+        "conditions": {
+            "model_id": model_id,
+            "parts": parts,
+        }
+    })
+    .to_string();
+    tracing::debug!("request:{:?}", request_obj);
+
+    let res = crate::request::rrai_cloud_post(&url, token, request_obj).await?;
+    Ok(res)
+}
+
 pub async fn query_dataset_row(token: &String, dataset_id: &String, id: u32) -> Result<String> {
     let url = format!("/dataset/rows/get/{}", id);
     //请求的URL
@@ -35,7 +95,7 @@ pub async fn query_dataset_row(token: &String, dataset_id: &String, id: u32) -> 
     Ok(res)
 }
 
-pub async fn insert_dataset_row(
+pub async fn dataset_create_row(
     token: &String,
     dataset_id: &String,
     row_cid: &String,

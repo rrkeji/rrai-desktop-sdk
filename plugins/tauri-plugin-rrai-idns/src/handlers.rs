@@ -77,7 +77,7 @@ pub async fn schema_by_model(
 
 /// 获取数据集中的数据
 #[command]
-pub async fn dataset_rows(
+pub async fn dataset_rows_search(
     state: State<'_, ContextState>,
     dataset_id: String,
     parts: Option<String>,
@@ -102,9 +102,67 @@ pub async fn dataset_rows(
     Ok(res)
 }
 
+/// 获取数据集中的数据
+#[command]
+pub async fn dataset_rows_search_owned(
+    state: State<'_, ContextState>,
+    dataset_id: String,
+    parts: Option<String>,
+    page_size: u32,
+    page: u32,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res =
+        crate::dataset::dataset_rows_search_owned(&token, &dataset_id, parts, page_size, page)
+            .await?;
+    Ok(res)
+}
+
+/// 获取数据集中的数据
+#[command]
+pub async fn dataset_rows_search_by_model(
+    state: State<'_, ContextState>,
+    model_id: String,
+    parts: Option<String>,
+    page_size: u32,
+    page: u32,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res =
+        crate::dataset::dataset_rows_search_by_model(&token, &model_id, parts, page_size, page)
+            .await?;
+    Ok(res)
+}
+
 /// 插入数据集中的数据
 #[command]
-pub async fn insert_dataset_row(
+pub async fn dataset_create_row(
     state: State<'_, ContextState>,
     dataset_id: String,
     row_cid: String,
@@ -124,7 +182,7 @@ pub async fn insert_dataset_row(
         token
     };
     //
-    let res = crate::dataset::insert_dataset_row(&token, &dataset_id, &row_cid, &parts).await?;
+    let res = crate::dataset::dataset_create_row(&token, &dataset_id, &row_cid, &parts).await?;
     Ok(res)
 }
 
@@ -197,6 +255,30 @@ pub async fn query_dataset_row(
     };
     //
     let res = crate::dataset::query_dataset_row(&token, &dataset_id, id).await?;
+    Ok(res)
+}
+
+/// 插入数据集中的数据
+#[command]
+pub async fn dataset_create_by_model_id(
+    state: State<'_, ContextState>,
+    model_id: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::dataset::dataset_create_by_model_id(&token, &model_id).await?;
     Ok(res)
 }
 
@@ -355,7 +437,66 @@ pub async fn ipfs_files_create(
         token
     };
     //
-    let res = crate::ipfs::ipfs_files_create(&token, parent_id, &cid,is_pin,is_dir,&file_name,file_size,&file_type,&avatar,&category).await?;
+    let res = crate::ipfs::ipfs_files_create(
+        &token, parent_id, &cid, is_pin, is_dir, &file_name, file_size, &file_type, &avatar,
+        &category,
+    )
+    .await?;
+    Ok(res)
+}
+
+///  
+#[command]
+pub async fn ipfs_files_create_with_string_content(
+    state: State<'_, ContextState>,
+    paths: Vec<String>,
+    content: String,
+    file_name: String,
+    file_type: String,
+    category: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::create_with_string_content(
+        &token, &paths, &content, &file_type, &file_name, &category,
+    )
+    .await?;
+    Ok(res)
+}
+
+///  
+#[command]
+pub async fn ipfs_files_mkdirs(
+    state: State<'_, ContextState>,
+    paths: Vec<String>,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::mkdirs(&token, &paths).await?;
     Ok(res)
 }
 
@@ -382,16 +523,13 @@ pub async fn ipfs_files_update(
         token
     };
     //
-    let res = crate::ipfs::ipfs_files_update(&token, id, &file_name,&avatar,&category).await?;
+    let res = crate::ipfs::ipfs_files_update(&token, id, &file_name, &avatar, &category).await?;
     Ok(res)
 }
 
 ///  
 #[command]
-pub async fn ipfs_files_remove(
-    state: State<'_, ContextState>,
-    id: u32,
-) -> Result<String> {
+pub async fn ipfs_files_remove(state: State<'_, ContextState>, id: u32) -> Result<String> {
     let token = {
         let context = state
             .0
@@ -412,10 +550,7 @@ pub async fn ipfs_files_remove(
 
 ///  
 #[command]
-pub async fn ipfs_pins_status(
-    state: State<'_, ContextState>,
-    cid: String,
-) -> Result<String> {
+pub async fn ipfs_pins_status(state: State<'_, ContextState>, cid: String) -> Result<String> {
     let token = {
         let context = state
             .0
@@ -434,13 +569,9 @@ pub async fn ipfs_pins_status(
     Ok(res)
 }
 
-
 ///  
 #[command]
-pub async fn ipfs_pins_unpin(
-    state: State<'_, ContextState>,
-    cid: String,
-) -> Result<String> {
+pub async fn ipfs_pins_unpin(state: State<'_, ContextState>, cid: String) -> Result<String> {
     let token = {
         let context = state
             .0
@@ -459,13 +590,9 @@ pub async fn ipfs_pins_unpin(
     Ok(res)
 }
 
-
 ///  
 #[command]
-pub async fn ipfs_pins_pin(
-    state: State<'_, ContextState>,
-    cid: String,
-) -> Result<String> {
+pub async fn ipfs_pins_pin(state: State<'_, ContextState>, cid: String) -> Result<String> {
     let token = {
         let context = state
             .0
