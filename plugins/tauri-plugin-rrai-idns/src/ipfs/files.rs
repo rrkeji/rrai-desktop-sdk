@@ -102,6 +102,16 @@ pub async fn create_with_string_content(
     Ok(res)
 }
 
+pub async fn ipfs_string_content(
+    token: &String,
+    cid: &String,
+    file_name: &String,
+) -> Result<String> {
+    let url = format!("/ipfs/{}/{}", cid, file_name);
+    let res = crate::request::rrai_cloud_get(&url, token).await?;
+    Ok(res)
+}
+
 pub async fn mkdirs(token: &String, paths: &Vec<String>) -> Result<String> {
     let url = format!("/ipfs/files/mkdirs");
     //请求的URL

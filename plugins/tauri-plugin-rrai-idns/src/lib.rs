@@ -38,6 +38,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             handlers::ipfs_files_mkdirs,
             handlers::ipfs_files_update,
             handlers::ipfs_files_remove,
+            handlers::ipfs_string_content,
             handlers::ipfs_pins_status,
             handlers::ipfs_pins_unpin,
             handlers::ipfs_pins_pin,

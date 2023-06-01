@@ -550,6 +550,30 @@ pub async fn ipfs_files_remove(state: State<'_, ContextState>, id: u32) -> Resul
 
 ///  
 #[command]
+pub async fn ipfs_string_content(
+    state: State<'_, ContextState>,
+    cid: String,
+    file_name: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::ipfs_string_content(&token, &cid, &file_name).await?;
+    Ok(res)
+}
+///  
+#[command]
 pub async fn ipfs_pins_status(state: State<'_, ContextState>, cid: String) -> Result<String> {
     let token = {
         let context = state
