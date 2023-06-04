@@ -1,7 +1,21 @@
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-pub async fn ipfs_files_search(token: &String, page_size: u32, page: u32) -> Result<String> {
+#[derive(Debug, Serialize, Deserialize)]
+pub struct IpfsFileSearchCondition {
+    parent_id: Option<u32>,
+    file_type: Option<String>,
+    keyword: Option<String>,
+    category: Option<String>,
+}
+
+pub async fn ipfs_files_search(
+    token: &String,
+    conditions: &IpfsFileSearchCondition,
+    page_size: u32,
+    page: u32,
+) -> Result<String> {
     let url = format!("/ipfs/files/search");
     //请求的URL
     tracing::debug!("请求的URL:{}", url);
@@ -9,8 +23,7 @@ pub async fn ipfs_files_search(token: &String, page_size: u32, page: u32) -> Res
     let request_obj = json!({
         "page_size": page_size,
         "page": page,
-        "conditions": {
-        }
+        "conditions": conditions
     })
     .to_string();
     tracing::debug!("request:{:?}", request_obj);

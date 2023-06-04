@@ -388,6 +388,7 @@ pub async fn tasks_task_process_result(
 #[command]
 pub async fn ipfs_files_search(
     state: State<'_, ContextState>,
+    conditions: crate::ipfs::IpfsFileSearchCondition,
     page_size: u32,
     page: u32,
 ) -> Result<String> {
@@ -405,7 +406,7 @@ pub async fn ipfs_files_search(
         token
     };
     //
-    let res = crate::ipfs::ipfs_files_search(&token, page_size, page).await?;
+    let res = crate::ipfs::ipfs_files_search(&token, &conditions, page_size, page).await?;
     Ok(res)
 }
 
