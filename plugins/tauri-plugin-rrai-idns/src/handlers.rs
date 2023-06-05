@@ -479,6 +479,68 @@ pub async fn ipfs_files_create_with_string_content(
 
 ///  
 #[command]
+pub async fn ipfs_files_create_with_bytes_content(
+    state: State<'_, ContextState>,
+    paths: Vec<String>,
+    content: Vec<u8>,
+    file_name: String,
+    file_type: String,
+    category: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::create_with_bytes_content(
+        &token, &paths, &content, &file_type, &file_name, &category,
+    )
+    .await?;
+    Ok(res)
+}
+
+///  
+#[command]
+pub async fn ipfs_files_create_with_local_file(
+    state: State<'_, ContextState>,
+    paths: Vec<String>,
+    content: String,
+    file_name: String,
+    file_type: String,
+    category: String,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::ipfs::create_with_local_file(
+        &token, &paths, &content, &file_type, &file_name, &category,
+    )
+    .await?;
+    Ok(res)
+}
+
+///  
+#[command]
 pub async fn ipfs_files_mkdirs(
     state: State<'_, ContextState>,
     paths: Vec<String>,

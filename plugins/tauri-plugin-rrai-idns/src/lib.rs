@@ -33,6 +33,8 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             handlers::tasks_task_process_result,
             //
             handlers::ipfs_files_search,
+            handlers::ipfs_files_create_with_local_file,
+            handlers::ipfs_files_create_with_bytes_content,
             handlers::ipfs_files_create_with_string_content,
             handlers::ipfs_files_create,
             handlers::ipfs_files_mkdirs,

@@ -1,4 +1,5 @@
 use anyhow::Result;
+use mpart_async::client::{ByteStream, MultipartRequest};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
@@ -122,6 +123,58 @@ pub async fn ipfs_string_content(
 ) -> Result<String> {
     let url = format!("/ipfs/{}/{}", cid, file_name);
     let res = crate::request::rrai_cloud_get(&url, token).await?;
+    Ok(res)
+}
+
+pub async fn create_with_bytes_content(
+    token: &String,
+    paths: &Vec<String>,
+    content: &Vec<u8>,
+    file_type: &String,
+    file_name: &String,
+    category: &String,
+) -> Result<String> {
+    let url = format!("/ipfs/files/create_with_bytes_content");
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+
+    let mut mpart = MultipartRequest::default();
+
+    mpart.add_stream(file_name, file_name, file_type, ByteStream::new(content));
+    mpart.add_field("file_name", file_name);
+    mpart.add_field("file_type", file_type);
+    mpart.add_field("category", category);
+    for path in paths {
+        mpart.add_field("path", path);
+    }
+
+    let res = crate::request::rrai_cloud_post_multipart(&url, token, mpart).await?;
+    Ok(res)
+}
+
+pub async fn create_with_local_file(
+    token: &String,
+    paths: &Vec<String>,
+    content: &String,
+    file_type: &String,
+    file_name: &String,
+    category: &String,
+) -> Result<String> {
+    let url = format!("/ipfs/files/create_with_bytes_content");
+    //请求的URL
+    tracing::debug!("请求的URL:{},{}", url, content);
+
+    let mut mpart = MultipartRequest::default();
+    //content
+    mpart.add_file(file_name, content);
+    mpart.add_field("file_name", file_name);
+    mpart.add_field("file_type", file_type);
+    mpart.add_field("category", category);
+    for path in paths {
+        mpart.add_field("path", path);
+    }
+
+    let res = crate::request::rrai_cloud_post_multipart_file_stream(&url, token, mpart).await?;
     Ok(res)
 }
 

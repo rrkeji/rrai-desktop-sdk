@@ -25,3 +25,4 @@ hyper = {version = "0.14", features = ["full"]}
 hyper-tls = "0.5.0"
 # rrai
 rrai-desktop-sdk-common = {version = "*", path = "../../crates/rrai-desktop-sdk-common"}
+mpart-async = "0.6.1"
