@@ -166,7 +166,7 @@ pub async fn create_with_local_file(
 
     let mut mpart = MultipartRequest::default();
     //content
-    mpart.add_file(file_name, content);
+    mpart.add_file("file", content);
     mpart.add_field("file_name", file_name);
     mpart.add_field("file_type", file_type);
     mpart.add_field("category", category);
