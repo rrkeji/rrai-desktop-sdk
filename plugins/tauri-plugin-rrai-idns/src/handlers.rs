@@ -81,6 +81,7 @@ pub async fn dataset_rows_search(
     state: State<'_, ContextState>,
     dataset_id: String,
     parts: Option<String>,
+    tags: Option<String>,
     page_size: u32,
     page: u32,
 ) -> Result<String> {
@@ -98,7 +99,8 @@ pub async fn dataset_rows_search(
         token
     };
     //
-    let res = crate::dataset::dataset_rows(&token, &dataset_id, parts, page_size, page).await?;
+    let res =
+        crate::dataset::dataset_rows(&token, &dataset_id, parts, tags, page_size, page).await?;
     Ok(res)
 }
 
@@ -108,6 +110,7 @@ pub async fn dataset_rows_search_owned(
     state: State<'_, ContextState>,
     dataset_id: String,
     parts: Option<String>,
+    tags: Option<String>,
     page_size: u32,
     page: u32,
 ) -> Result<String> {
@@ -125,9 +128,15 @@ pub async fn dataset_rows_search_owned(
         token
     };
     //
-    let res =
-        crate::dataset::dataset_rows_search_owned(&token, &dataset_id, parts, page_size, page)
-            .await?;
+    let res = crate::dataset::dataset_rows_search_owned(
+        &token,
+        &dataset_id,
+        parts,
+        tags,
+        page_size,
+        page,
+    )
+    .await?;
     Ok(res)
 }
 
@@ -137,6 +146,7 @@ pub async fn dataset_rows_search_by_model(
     state: State<'_, ContextState>,
     model_id: String,
     parts: Option<String>,
+    tags: Option<String>,
     page_size: u32,
     page: u32,
 ) -> Result<String> {
@@ -154,9 +164,10 @@ pub async fn dataset_rows_search_by_model(
         token
     };
     //
-    let res =
-        crate::dataset::dataset_rows_search_by_model(&token, &model_id, parts, page_size, page)
-            .await?;
+    let res = crate::dataset::dataset_rows_search_by_model(
+        &token, &model_id, parts, tags, page_size, page,
+    )
+    .await?;
     Ok(res)
 }
 
@@ -167,6 +178,7 @@ pub async fn dataset_create_row(
     dataset_id: String,
     row_cid: String,
     parts: String,
+    tags: String,
 ) -> Result<String> {
     let token = {
         let context = state
@@ -182,7 +194,7 @@ pub async fn dataset_create_row(
         token
     };
     //
-    let res = crate::dataset::dataset_create_row(&token, &dataset_id, &row_cid, &parts).await?;
+    let res = crate::dataset::dataset_create_row(&token, &dataset_id, &row_cid, &parts, &tags).await?;
     Ok(res)
 }
 
@@ -193,6 +205,7 @@ pub async fn update_dataset_row(
     id: u32,
     row_cid: String,
     parts: String,
+    tags: String,
 ) -> Result<String> {
     let token = {
         let context = state.0.lock().map_err(
@@ -209,7 +222,7 @@ pub async fn update_dataset_row(
         token
     };
     //
-    let res = crate::dataset::update_dataset_row(&token, id, &row_cid, &parts).await?;
+    let res = crate::dataset::update_dataset_row(&token, id, &row_cid, &parts, &tags).await?;
     Ok(res)
 }
 /// 插入数据集中的数据

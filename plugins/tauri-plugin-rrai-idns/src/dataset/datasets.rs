@@ -13,6 +13,7 @@ pub async fn dataset_rows(
     token: &String,
     dataset_id: &String,
     parts: Option<String>,
+    tags: Option<String>,
     page_size: u32,
     page: u32,
 ) -> Result<String> {
@@ -26,6 +27,7 @@ pub async fn dataset_rows(
         "conditions": {
             "dataset_id": dataset_id.clone(),
             "parts": parts,
+            "tags": tags,
         }
     })
     .to_string();
@@ -39,6 +41,7 @@ pub async fn dataset_rows_search_owned(
     token: &String,
     dataset_id: &String,
     parts: Option<String>,
+    tags: Option<String>,
     page_size: u32,
     page: u32,
 ) -> Result<String> {
@@ -52,6 +55,7 @@ pub async fn dataset_rows_search_owned(
         "conditions": {
             "dataset_id": dataset_id.clone(),
             "parts": parts,
+            "tags": tags,
         }
     })
     .to_string();
@@ -65,6 +69,7 @@ pub async fn dataset_rows_search_by_model(
     token: &String,
     model_id: &String,
     parts: Option<String>,
+    tags: Option<String>,
     page_size: u32,
     page: u32,
 ) -> Result<String> {
@@ -78,6 +83,7 @@ pub async fn dataset_rows_search_by_model(
         "conditions": {
             "model_id": model_id,
             "parts": parts,
+            "tags": tags,
         }
     })
     .to_string();
@@ -100,6 +106,7 @@ pub async fn dataset_create_row(
     dataset_id: &String,
     row_cid: &String,
     parts: &String,
+    tags: &String,
 ) -> Result<String> {
     let url = format!("/dataset/rows/create");
     //请求的URL
@@ -108,7 +115,8 @@ pub async fn dataset_create_row(
     let request_obj = json!({
         "dataset_id": dataset_id.clone(),
         "row_cid": row_cid.clone(),
-        "parts":  parts.clone()
+        "parts":  parts.clone(),
+        "tags":tags.clone(),
     })
     .to_string();
     tracing::debug!("request:{:?}", request_obj);
@@ -122,6 +130,7 @@ pub async fn update_dataset_row(
     id: u32,
     row_cid: &String,
     parts: &String,
+    tags: &String,
 ) -> Result<String> {
     let url = format!("/dataset/rows/update/{}", id);
     //请求的URL
@@ -129,7 +138,8 @@ pub async fn update_dataset_row(
 
     let request_obj = json!({
         "row_cid": row_cid.clone(),
-        "parts":  parts.clone()
+        "parts":  parts.clone(),
+        "tags":tags.clone(),
     })
     .to_string();
     tracing::debug!("request:{:?}", request_obj);
