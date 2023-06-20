@@ -194,7 +194,8 @@ pub async fn dataset_create_row(
         token
     };
     //
-    let res = crate::dataset::dataset_create_row(&token, &dataset_id, &row_cid, &parts, &tags).await?;
+    let res =
+        crate::dataset::dataset_create_row(&token, &dataset_id, &row_cid, &parts, &tags).await?;
     Ok(res)
 }
 
@@ -358,6 +359,30 @@ pub async fn tasks_task_take(
     };
     //
     let res = crate::task::tasks_task_take(&token, &peer_id, &env, &abilities).await?;
+    Ok(res)
+}
+
+/// 获取任务
+#[command]
+pub async fn tasks_task_query_by_id(
+    state: State<'_, ContextState>,
+    task_id: u32,
+) -> Result<String> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::task::tasks_task_query_by_id(&token, task_id).await?;
     Ok(res)
 }
 

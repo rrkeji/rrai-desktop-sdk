@@ -81,3 +81,12 @@ pub async fn tasks_task_process_result(
     let res = crate::request::rrai_cloud_post(&url, token, request_obj).await?;
     Ok(res)
 }
+
+/// 查询任务
+pub async fn tasks_task_query_by_id(token: &String, task_id: u32) -> Result<String> {
+    let url = format!("/tasks/task/get/{}", task_id);
+    //请求的URL
+    tracing::debug!("请求的URL:{}", url);
+    let res = crate::request::rrai_cloud_get(&url, token).await?;
+    Ok(res)
+}

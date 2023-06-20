@@ -30,6 +30,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             //
             handlers::tasks_task_publish,
             handlers::tasks_task_take,
+            handlers::tasks_task_query_by_id,
             handlers::tasks_task_process_result,
             //
             handlers::ipfs_files_search,
