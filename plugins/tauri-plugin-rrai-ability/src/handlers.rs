@@ -31,8 +31,8 @@ pub async fn auto_scan() -> Result<bool> {
 
 /// 能力扫描
 #[command]
-pub async fn ability_scan(ability: String) -> Result<bool> {
-    let _ = crate::abilities::ability_scan(&ability).await?;
+pub async fn ability_env_scan(ability: String) -> Result<bool> {
+    let _ = crate::abilities::ability_env_scan(&ability).await?;
     Ok(true)
 }
 
@@ -48,6 +48,13 @@ pub async fn perform_task(ability: String, args: String) -> Result<String> {
 pub async fn perform_task_status(task_id: String) -> Result<HashMap<String, Value>> {
     let res = crate::abilities::perform_task_status(&task_id).await?;
     Ok(res)
+}
+
+
+#[command]
+pub async fn list_ability_envs() -> Result<Vec<HashMap<String, Value>>> {
+    let files = crate::abilities::list_ability_envs().await?;
+    Ok(files)
 }
 
 #[command]
@@ -88,13 +95,48 @@ pub async fn update_ability(
 }
 
 #[command]
+pub async fn update_ability_env(
+    id: u32,
+    is_available: u32,
+    env_code: String,
+    version: String,
+    icon: String,
+    category: String,
+    settings: String,
+) -> Result<usize> {
+    let res = crate::abilities::update_ability_env(
+        id,
+        is_available,
+        env_code,
+        version,
+        icon,
+        category,
+        settings,
+    )
+    .await?;
+    Ok(res)
+}
+
+#[command]
 pub async fn update_ability_settings(ability: String, settings: String) -> Result<usize> {
     let res = crate::abilities::update_ability_settings(&ability, &settings).await?;
     Ok(res)
 }
 
 #[command]
+pub async fn update_ability_env_settings(ability: String, settings: String) -> Result<usize> {
+    let res = crate::abilities::update_ability_settings(&ability, &settings).await?;
+    Ok(res)
+}
+
+#[command]
 pub async fn delete_ability(id: u32) -> Result<usize> {
+    let res = crate::abilities::delete_ability(id).await?;
+    Ok(res)
+}
+
+#[command]
+pub async fn delete_ability_env(id: u32) -> Result<usize> {
     let res = crate::abilities::delete_ability(id).await?;
     Ok(res)
 }

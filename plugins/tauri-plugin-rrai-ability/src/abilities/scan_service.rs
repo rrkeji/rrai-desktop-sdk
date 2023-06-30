@@ -16,9 +16,9 @@ pub async fn auto_scan() -> Result<()> {
 }
 
 /// 自动扫描
-pub async fn ability_scan(ability: &String) -> Result<()> {
+pub async fn ability_env_scan(ability_env: &String) -> Result<()> {
     //依次调用查看能力
-    if ability == crate::constants::STABLE_DIFFUSION_ABILITY_NAME {
+    if ability_env == crate::constants::STABLE_DIFFUSION_ABILITY_NAME {
         //Stable Diffusion
         crate::abilities::stable_diffusion::scan_and_insert().await?;
     }
