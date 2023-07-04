@@ -26,7 +26,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
 
     Builder::new("rrai-ability")
         .invoke_handler(tauri::generate_handler![
-            handlers::auto_scan,
+            handlers::env_auto_scan,
             handlers::ability_env_scan,
             handlers::perform_task_status,
             handlers::perform_task,

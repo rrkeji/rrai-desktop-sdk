@@ -12,7 +12,7 @@ CREATE TABLE rrai_ability_env (
     `settings` TEXT DEFAULT '',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(`ability`) ON CONFLICT REPLACE
+    UNIQUE(`env_code`) ON CONFLICT REPLACE
 );
 
 CREATE TRIGGER rrai_ability_env_updated AFTER UPDATE ON rrai_ability_env 
@@ -41,6 +41,7 @@ CREATE TABLE rrai_abilities (
     `version_infor` TEXT DEFAULT '',
     `files` TEXT DEFAULT '',
     `dependencies` TEXT DEFAULT '',
+    `icon` TEXT DEFAULT '',
     `category` TEXT DEFAULT '',
     `settings_schema` TEXT DEFAULT '',
     `install_guide` TEXT DEFAULT '',

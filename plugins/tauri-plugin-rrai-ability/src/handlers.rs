@@ -24,8 +24,8 @@ type Result<T> = std::result::Result<T, Error>;
 
 /// 自动扫描
 #[command]
-pub async fn auto_scan() -> Result<bool> {
-    let _ = crate::abilities::auto_scan().await?;
+pub async fn env_auto_scan() -> Result<bool> {
+    let _ = crate::abilities::env_auto_scan().await?;
     Ok(true)
 }
 

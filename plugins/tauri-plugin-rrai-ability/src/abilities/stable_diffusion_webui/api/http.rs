@@ -97,7 +97,11 @@ async fn webui_post(path: &str, request_obj: String) -> Result<String> {
     //构建Https Client
     let client = Client::builder().build::<_, hyper::Body>(https);
 
-    let url = format!("{}{}", "http://127.0.0.1:7860", path.clone(),);
+    let url = format!(
+        "{}{}",
+        crate::abilities::stable_diffusion_webui::get_webui_url(),
+        path.clone(),
+    );
     //请求的URL
     tracing::debug!("请求的URL:{}", url);
 
