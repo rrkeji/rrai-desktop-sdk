@@ -1,0 +1,17 @@
+[package]
+name = "rrai-libp2p"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.3.10", features = ["derive"] }
+async-std = { version = "1.12", features = ["attributes"] }
+async-trait = "0.1"
+futures = "0.3"
+futures-timer = "3.0"
+
+tracing = "0.1.15"
+tracing-subscriber = { version = "0.3", features = ["fmt"] }
+
+libp2p = { version="0.52",  features = ["async-std", "noise", "dns", "dcutr", "macros", "ping", "tcp", "identify", "yamux", "relay"]}
+libp2p-quic = { version="0.8.0-alpha", features = ["async-std"] }
