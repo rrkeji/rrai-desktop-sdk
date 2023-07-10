@@ -23,7 +23,7 @@ pub async fn scan_and_insert() -> Result<()> {
     let (available, info_string) = is_available().await?;
 
     crate::abilities::abilities_env_service::insert_or_update_ability_env(
-        &String::from("StableDiffusionWebUI"),
+        &String::from(crate::constants::STABLE_DIFFUSION_WEBUI_ABILITY_NAME),
         if available { 1 } else { 0 },
         &String::from(""),
         &info_string,

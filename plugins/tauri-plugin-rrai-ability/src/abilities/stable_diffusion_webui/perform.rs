@@ -5,8 +5,8 @@ use tera::{Context, Tera};
 
 pub async fn perform_test() -> Result<String> {
     //获取配置信息
-    let settings_values = crate::abilities::abilities_service::query_ability_settings(
-        &String::from(crate::constants::STABLE_DIFFUSION_ABILITY_NAME),
+    let settings_values = crate::abilities::abilities_env_service::query_ability_env_settings(
+        &String::from(crate::constants::STABLE_DIFFUSION_WEBUI_ABILITY_NAME),
     )
     .await?;
 
@@ -50,10 +50,10 @@ pub async fn perform_test() -> Result<String> {
     }
 }
 
-pub async fn perform_task() -> Result<String> {
+pub async fn perform_task(task_id: &String, args: &String) -> Result<String> {
     //获取配置信息
-    let settings_values = crate::abilities::abilities_service::query_ability_settings(
-        &String::from(crate::constants::STABLE_DIFFUSION_ABILITY_NAME),
+    let settings_values = crate::abilities::abilities_env_service::query_ability_env_settings(
+        &String::from(crate::constants::STABLE_DIFFUSION_WEBUI_ABILITY_NAME),
     )
     .await?;
 

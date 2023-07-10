@@ -37,7 +37,6 @@ use std::error::Error;
 use std::net::{Ipv4Addr, Ipv6Addr};
 
 fn main() -> Result<(), Box<dyn Error>> {
-
     let opt = Opt::parse();
     println!("opt: {opt:?}");
 

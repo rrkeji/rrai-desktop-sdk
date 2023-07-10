@@ -5,3 +5,4 @@ Cargo.lock
 /temp
 .DS_Store
 .env
+Cargo.lock
