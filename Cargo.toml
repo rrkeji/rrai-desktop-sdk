@@ -17,6 +17,7 @@ tauri-plugin-rrai-ability = { version = "*", path = "plugins/tauri-plugin-rrai-a
 members = [
   "crates/rrai-desktop-sdk-common",
   "crates/rrai-cloud-client",
+  "crates/stable-diffusion-webui-client",
   "crates/rrai-libp2p",
   "plugins/tauri-plugin-rrai-idns",
   "plugins/tauri-plugin-rrai-sqlite",
