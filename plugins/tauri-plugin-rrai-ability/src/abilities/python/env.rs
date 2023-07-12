@@ -17,7 +17,7 @@ pub async fn is_available() -> Result<(bool, String)> {
 pub async fn scan_and_insert() -> Result<()> {
     let (available, version) = is_available().await?;
 
-    crate::abilities::abilities_env_service::insert_or_update_ability_env(
+    crate::abilities::abilities_service::insert_or_update_ability(
         &String::from("Python"),
         if available { 1 } else { 0 },
         &String::from(""),
