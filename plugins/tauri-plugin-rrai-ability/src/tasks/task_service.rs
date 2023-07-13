@@ -7,36 +7,85 @@ use serde_json::{json, Value};
 //----------------------------------------------
 const TABLE_NAME: &str = "rrai_local_tasks";
 
-const ALL_FIELDS: &str= " id, task_id, ability, args, remote, remote_task_id, remote_server, result_code, stdout, stderr, result, STRFTIME(created_at), STRFTIME(updated_at) ";
+const ALL_FIELDS: &str= " id, task_id, task_type, ability, args, request_task_id, request_task_process_id, request_server, result_code, stdout, stderr, result, STRFTIME(created_at), STRFTIME(updated_at) ";
 
-pub async fn list_tasks() -> Result<Vec<HashMap<String, Value>>> {
+pub async fn list_tasks(page: u32, page_size: u32) -> Result<(Value, Vec<HashMap<String, Value>>)> {
+    let cnt = {
+        let mut count_map = query_with_args(
+            &crate::constants::ABILITIES_DATABASE_NAME.to_string(),
+            &format!("SELECT count(1) cnt FROM {} order by id", TABLE_NAME),
+            &json!({}),
+        )
+        .await?;
+
+        if let Some(item) = count_map.pop() {
+            Ok(item.get("cnt").map_or(json!(0), |i| i.clone()))
+        } else {
+            Err(anyhow!("没有找到"))
+        }
+    }?;
+
     let abilities = query_with_args(
         &crate::constants::ABILITIES_DATABASE_NAME.to_string(),
         &format!(
-            "SELECT {} FROM {} WHERE order by id",
-            ALL_FIELDS, TABLE_NAME
+            "SELECT {} FROM {} order by id limit {}, {}",
+            ALL_FIELDS,
+            TABLE_NAME,
+            (page - 1) * page_size,
+            page_size
         ),
         &json!({}),
     )
     .await?;
 
-    Ok(abilities)
+    Ok((cnt, abilities))
 }
 
-pub async fn list_local_tasks(is_local: bool) -> Result<Vec<HashMap<String, Value>>> {
+pub async fn list_tasks_by_task_type(
+    task_type: &String,
+    ability: &String,
+    page: u32,
+    page_size: u32,
+) -> Result<(Value, Vec<HashMap<String, Value>>)> {
     let abilities = query_with_args(
         &crate::constants::ABILITIES_DATABASE_NAME.to_string(),
         &format!(
-            "SELECT {} FROM {} WHERE remote = :remote order by id",
+            "SELECT {} FROM {} WHERE task_type = :task_type and ability = :ability order by id",
             ALL_FIELDS, TABLE_NAME
         ),
-        &json!({
-            ":remote" : if is_local {0}else{1}
-        }),
+        &json!({ ":task_type": task_type ,"ability":ability}),
     )
     .await?;
 
-    Ok(abilities)
+    let cnt = {
+        let mut count_map = query_with_args(
+            &crate::constants::ABILITIES_DATABASE_NAME.to_string(),
+            &format!("SELECT count(1) cnt FROM {} WHERE task_type = :task_type and ability = :ability order by id", TABLE_NAME),
+            &json!({ ":task_type": task_type ,"ability":ability}),
+        )
+        .await?;
+
+        if let Some(item) = count_map.pop() {
+            Ok(item.get("cnt").map_or(json!(0), |i| i.clone()))
+        } else {
+            Err(anyhow!("没有找到"))
+        }
+    }?;
+
+    let abilities = query_with_args(
+        &crate::constants::ABILITIES_DATABASE_NAME.to_string(),
+        &format!(
+            "SELECT {} FROM {} order by id limit {}, {}",
+            ALL_FIELDS,
+            TABLE_NAME,
+            (page - 1) * page_size,
+            page_size
+        ),
+        &json!({ ":task_type": task_type }),
+    )
+    .await?;
+
+    Ok((cnt, abilities))
 }
 
 pub async fn query_by_task_id(task_id: &String) -> Result<HashMap<String, Value>> {
@@ -59,40 +108,27 @@ pub async fn query_by_task_id(task_id: &String) -> Result<HashMap<String, Value>
     }
 }
 
-pub async fn insert_local_task(task_id: &String, ability: &String, args: &String) -> Result<usize> {
+pub async fn insert_local_task(
+    task_id: &String,
+    task_type: &String,
+    ability: &String,
+    args: &String,
+    request_task_id: u32,
+    request_task_process_id: u32,
+) -> Result<usize> {
     let res = execute(
         &crate::constants::ABILITIES_DATABASE_NAME.to_string(),
         &format!(
-            "INSERT INTO {} (task_id, ability, args) VALUES(:task_id, :ability, :args)",
+            "INSERT INTO {} (task_id, task_type, ability, args,request_task_id,request_task_process_id) VALUES(:task_id,:task_type, :ability, :args,:request_task_id,:request_task_process_id)",
             TABLE_NAME
         ),
         &json!({
             ":task_id": task_id,
+            ":task_type": task_type,
             ":ability": ability,
             ":args":   args,
-        }),
-    )
-    .await?;
-    Ok(res)
-}
-
-pub async fn insert_remote_task(
-    task_id: &String,
-    ability: &String,
-    args: &String,
-    remote_task_id: &String,
-    remote_server: &String,
-) -> Result<usize> {
-    let res = execute(
-        &crate::constants::ABILITIES_DATABASE_NAME.to_string(),
-        &format!("INSERT INTO {} (task_id, ability, args, remote, remote_task_id, remote_server) VALUES(:task_id, :ability, :args, :remote, :remote_task_id, :remote_server)", TABLE_NAME),
-        &json!({
-            ":task_id": task_id,
-            ":ability": ability,
-            ":args":   args,
-            ":remote": 1_u16,
-            ":remote_task_id": remote_task_id,
-            ":remote_server": remote_server,
+            ":request_task_id":   request_task_id,
+            ":request_task_process_id":   request_task_process_id,
         }),
     )
     .await?;

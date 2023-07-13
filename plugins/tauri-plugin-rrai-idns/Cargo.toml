@@ -23,6 +23,9 @@ tracing-subscriber = {version = "0.3", features = ["fmt"]}
 futures-util = "0.3.26"
 hyper = {version = "0.14", features = ["full"]}
 hyper-tls = "0.5.0"
+mpart-async = "0.6.1"
+
 # rrai
 rrai-desktop-sdk-common = {version = "*", path = "../../crates/rrai-desktop-sdk-common"}
-mpart-async = "0.6.1"
+tauri-plugin-rrai-ability = { version = "*", path = "../tauri-plugin-rrai-ability" }
+

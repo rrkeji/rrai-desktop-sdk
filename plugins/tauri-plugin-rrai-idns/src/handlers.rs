@@ -342,7 +342,8 @@ pub async fn tasks_task_take(
     state: State<'_, ContextState>,
     peer_id: String,
     env: String,
-    abilities: Vec<String>,
+    task_type: String,
+    abilities: String,
 ) -> Result<String> {
     let token = {
         let context = state
@@ -358,8 +359,29 @@ pub async fn tasks_task_take(
         token
     };
     //
-    let res = crate::task::tasks_task_take(&token, &peer_id, &env, &abilities).await?;
+    let res = crate::task::tasks_task_take(&token, &peer_id, &env, &task_type, &abilities).await?;
     Ok(res)
+}
+
+/// 获取任务
+#[command]
+pub async fn tasks_worker_wakeup(state: State<'_, ContextState>) -> Result<()> {
+    let token = {
+        let context = state
+            .0
+            .lock()
+            .map_err(|err| anyhow::anyhow!("获取锁失败:{}", err))?;
+        let token = context
+            .get(&String::from(crate::constants::TOKEN_KEY))
+            .map_or(
+                Err(Error::Anyhow(anyhow::anyhow!("没有找到Token"))),
+                |v| Ok(v.clone()),
+            )?;
+        token
+    };
+    //
+    let res = crate::task::tasks_worker_wakeup(&token).await?;
+    Ok(())
 }
 
 /// 获取任务
@@ -395,6 +417,7 @@ pub async fn tasks_task_process_result(
     progress: u16,
     result_code: u16,
     result: String,
+    logs: String,
 ) -> Result<String> {
     let token = {
         let context = state
@@ -417,6 +440,7 @@ pub async fn tasks_task_process_result(
         progress,
         result_code,
         &result,
+        &logs,
     )
     .await?;
     Ok(res)

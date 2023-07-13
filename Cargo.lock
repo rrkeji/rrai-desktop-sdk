@@ -6029,6 +6029,7 @@ name = "tauri-plugin-rrai-ability"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "base64 0.21.0",
  "bytes",
  "deadqueue",
  "futures",
@@ -6092,6 +6093,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tauri",
+ "tauri-plugin-rrai-ability",
  "thiserror",
  "tracing",
  "tracing-subscriber",

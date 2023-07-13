@@ -140,7 +140,7 @@ pub async fn create_with_bytes_content(
 
     let mut mpart = MultipartRequest::default();
 
-    mpart.add_stream(file_name, file_name, file_type, ByteStream::new(content));
+    mpart.add_stream("file", file_name, file_type, ByteStream::new(content));
     mpart.add_field("file_name", file_name);
     mpart.add_field("file_type", file_type);
     mpart.add_field("category", category);

@@ -28,7 +28,7 @@ pub async fn env_auto_scan() -> Result<bool> {
     let _ = crate::abilities::env_auto_scan().await?;
     Ok(true)
 }
- 
+
 /// 执行任务
 #[command]
 pub async fn perform_task(ability: String, args: String) -> Result<String> {
@@ -93,14 +93,8 @@ pub async fn delete_ability(id: u32) -> Result<usize> {
 }
 
 #[command]
-pub async fn list_tasks() -> Result<Vec<HashMap<String, Value>>> {
-    let files = crate::tasks::list_tasks().await?;
-    Ok(files)
-}
-
-#[command]
-pub async fn list_local_tasks(is_local: bool) -> Result<Vec<HashMap<String, Value>>> {
-    let files = crate::tasks::list_local_tasks(is_local).await?;
+pub async fn list_tasks(page: u32, page_size: u32) -> Result<(Value, Vec<HashMap<String, Value>>)> {
+    let files = crate::tasks::list_tasks(page, page_size).await?;
     Ok(files)
 }
 

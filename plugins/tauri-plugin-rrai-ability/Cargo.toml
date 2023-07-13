@@ -34,6 +34,8 @@ deadqueue = "0.2"
 stack-string = "0.8.0"
 walkdir = "2.3.3"
 
+base64 = "0.21.0"
+
 # rrai
 rrai-desktop-sdk-common = { version = "*", path = "../../crates/rrai-desktop-sdk-common" }
 stable-diffusion-webui-client = { version = "*", path = "../../crates/stable-diffusion-webui-client" }

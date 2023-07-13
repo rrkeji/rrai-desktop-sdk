@@ -1,4 +1,4 @@
-mod abilities;
+pub mod abilities;
 mod constants;
 mod handlers;
 mod migration;
@@ -37,7 +37,6 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             handlers::delete_ability,
             //
             handlers::list_tasks,
-            handlers::list_local_tasks,
             handlers::query_task_by_task_id,
             handlers::query_task_status,
             handlers::delete_task,
