@@ -7,6 +7,7 @@ mod models;
 
 use anyhow::anyhow;
 use rrai_desktop_sdk_common::utils::read_bytes_from_pathbuf;
+use std::{collections::HashMap, path::Path};
 use tauri::{
     http::{Request as HttpRequest, Response as HttpResponse},
     plugin::{Builder, TauriPlugin},
@@ -81,9 +82,25 @@ pub fn rrfile_protocol<R: Runtime>(
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
     //异步非阻塞
     tauri::async_runtime::spawn(async move {
+        //检查是否已经存在初始目录
+        if let init =
+            crate::ipfs::check_installed().expect("failed to check_installed `ipfs` binary command")
+        {
+            if !init {
+                crate::ipfs::ipfs_init().expect("failed to ipfs_init `ipfs` binary command");
+            }
+        }
+
+        let mut envs = HashMap::new();
+        envs.insert(
+            "IPFS_PATH".into(),
+            crate::ipfs::get_rrai_ipfs_home()
+                .expect("failed to get_rrai_ipfs_home `ipfs` binary command"),
+        );
         //启动 ipfs
         let (mut rx, mut child) = tauri::api::process::Command::new_sidecar("ipfs")
             .expect("failed to create `ipfs` binary command")
+            .envs(envs)
             .args(["daemon"])
             .spawn()
             .expect("Failed to spawn sidecar");
