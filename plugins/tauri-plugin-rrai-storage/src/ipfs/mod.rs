@@ -9,7 +9,10 @@ use std::path::PathBuf;
 use std::{collections::HashMap, path::Path};
 
 pub fn get_rrai_ipfs_home() -> Result<String> {
-    let res = format!("{}", rrai_home_path()?.join("ipfs").as_path().to_str().unwrap());
+    let res = format!(
+        "{}",
+        rrai_home_path()?.join("ipfs").as_path().to_str().unwrap()
+    );
     tracing::debug!("path:[{}]", res);
     Ok(res)
 }
@@ -59,7 +62,7 @@ pub fn update_ipfs_config() -> Result<bool> {
     buf_reader.read_to_end(&mut buffer)?;
 
     //
-    let mut config_value: Value = serde_json::from_slice(&buffer)?;
+    let config_value: Value = serde_json::from_slice(&buffer)?;
     //Bootstrap
     //"/ip4/49.232.102.140/tcp/4001/p2p/12D3KooWRJuU3Z78e3hJR2mn59eaaPrLzb23rRcnyZfwLhjqdydv"
 
