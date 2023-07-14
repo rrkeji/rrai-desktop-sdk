@@ -9,10 +9,9 @@ use std::path::PathBuf;
 use std::{collections::HashMap, path::Path};
 
 pub fn get_rrai_ipfs_home() -> Result<String> {
-    Ok(format!(
-        "{:?}",
-        rrai_home_path()?.join("ipfs").as_path().as_os_str()
-    ))
+    let res = format!("{}", rrai_home_path()?.join("ipfs").as_path().to_str().unwrap());
+    tracing::debug!("path:[{}]", res);
+    Ok(res)
 }
 
 ///
@@ -28,7 +27,7 @@ pub fn check_installed() -> Result<bool> {
 ///
 pub fn ipfs_init() -> Result<bool> {
     //
-    std::fs::create_dir_all(rrai_home_path()?.join("ipfs").join("ipfs2222").as_path())?;
+    std::fs::create_dir_all(rrai_home_path()?.join("ipfs").as_path())?;
 
     let mut envs = HashMap::new();
 
