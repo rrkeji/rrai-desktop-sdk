@@ -135,6 +135,7 @@ pub async fn tasks_worker_wakeup(token: &String) -> Result<()> {
     let env = String::from("");
     let task_type = String::from("AI_STABLE_DIFFUSION");
     let abilities = String::from("AI_STABLE_DIFFUSION_WEBUI");
+    let action = String::from("TXT2IMG");
 
     if let Ok(process_str) = tasks_task_take(token, &peer_id, &env, &task_type, &abilities).await {
         tracing::debug!("{}", process_str);
