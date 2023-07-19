@@ -120,16 +120,17 @@ def remove_pngs_in_dir(path):
 
 
 if __name__ == '__main__':
-    original_movie_path = "/Users/suhs/shares/1080p.mp4"
-    frame_path = "/Users/suhs/shares/01"
-    frame_mask_path =  "/Users/suhs/shares/frame_mask"
-    org_key_path = "/Users/suhs/shares/key"
-    key_th=1080
+    original_movie_path = "{{original_movie_path}}"
+    frame_path = "{{frame_path}}"
+    frame_mask_path =  "{{frame_path}}"
+    org_key_path = "{{org_key_path}}"
+
+    key_th={{key_th}}
     key_add_last_frame = True
     is_invert_mask = True
 
-    key_min_gap = 10
-    key_max_gap = 20
+    key_min_gap = {{key_min_gap}}
+    key_max_gap = {{key_max_gap}}
 
 
     remove_pngs_in_dir(org_key_path)

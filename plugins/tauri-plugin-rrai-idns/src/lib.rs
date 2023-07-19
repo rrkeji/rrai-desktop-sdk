@@ -4,7 +4,7 @@ mod handlers;
 mod ipfs;
 mod meta;
 mod request;
-mod task;
+pub mod task;
 
 use tauri::{
     plugin::{Builder, TauriPlugin},

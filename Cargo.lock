@@ -6088,6 +6088,7 @@ dependencies = [
  "futures-util",
  "hyper",
  "hyper-tls",
+ "lazy_static",
  "mpart-async",
  "rrai-desktop-sdk-common",
  "serde",
@@ -6095,6 +6096,7 @@ dependencies = [
  "tauri",
  "tauri-plugin-rrai-ability",
  "thiserror",
+ "tokio",
  "tracing",
  "tracing-subscriber",
 ]

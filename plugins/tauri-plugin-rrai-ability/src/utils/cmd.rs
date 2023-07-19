@@ -36,6 +36,38 @@ pub async fn execute_command(command: &String) -> Result<(Option<i32>, String)> 
     }
 }
 
+pub async fn execute_command_with_dir(
+    dir: &String,
+    command: &String,
+) -> Result<(Option<i32>, String)> {
+    //
+    let output = if cfg!(target_os = "windows") {
+        Command::new("cmd")
+            .current_dir(dir)
+            .arg("/C")
+            .arg(command)
+            .output()
+            .map_err(|err| anyhow!("调用命令失败:{}", err))?
+    } else {
+        Command::new("sh")
+            .current_dir(dir)
+            .arg("-c")
+            .arg(command)
+            .output()
+            .map_err(|err| anyhow!("调用命令失败:{}", err))?
+    };
+
+    let status = output.status;
+    let stdout = output.stdout;
+    let stderr = output.stderr;
+
+    if status.success() {
+        Ok((status.code(), String::from_utf8_lossy(&stdout).to_string()))
+    } else {
+        Ok((status.code(), String::from_utf8_lossy(&stderr).to_string()))
+    }
+}
+
 pub async fn async_execute_command(command: &String) -> Result<String> {
     //
     let child = if cfg!(target_os = "windows") {

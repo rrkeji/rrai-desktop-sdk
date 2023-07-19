@@ -29,6 +29,7 @@ pub async fn perform_task_status(task_id: &String) -> Result<HashMap<String, Val
 pub async fn perform_task_and_block<F, R>(
     task_type: &String,
     ability: &String,
+    action: &String,
     args: &String,
     request_task_id: u32,
     request_task_process_id: u32,
@@ -53,9 +54,15 @@ where
     //依次调用查看能力
     let res = if ability == crate::constants::STABLE_DIFFUSION_WEBUI_ABILITY_NAME {
         //Stable Diffusion
+        let res = crate::abilities::stable_diffusion_webui::perform_task_and_block(
+            &uuid, action, args, explorer,
+        )
+        .await;
+        res
+    } else if ability == crate::constants::PYTHON_ABILITY_NAME {
+        //PYTHON
         let res =
-            crate::abilities::stable_diffusion_webui::perform_task_and_block(&uuid, args, explorer)
-                .await;
+            crate::abilities::python::perform_task_and_block(&uuid, action, args, explorer).await;
         res
     } else {
         Err(anyhow!("不支持的能力:{}", ability))

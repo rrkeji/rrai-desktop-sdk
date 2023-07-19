@@ -2,6 +2,7 @@ use crate::ipfs::create_with_bytes_content;
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::sync::{Arc, Mutex, RwLock};
 use tauri_plugin_rrai_ability::abilities::perform_task_and_block;
 
 /// 发布任务
@@ -104,6 +105,7 @@ pub struct AiTaskProcessEntity {
     pub task_id: u32,
     pub task_type: String,
     pub model: String,
+    pub action: String,
     pub model_args: String,
     pub reward: u32,
     pub deadline: Option<u32>,
@@ -129,21 +131,66 @@ pub struct IpfsCidResult {
     pub data: String,
 }
 
+lazy_static::lazy_static! {
+    static ref TASK_LOCK: RwLock<Option<bool>> = RwLock::new(None);
+}
+
 //
 pub async fn tasks_worker_wakeup(token: &String) -> Result<()> {
+    //
+    let running = TASK_LOCK
+        .read()
+        .map_err(|_err| anyhow!("获取锁失败"))?
+        .is_some();
+
+    if running {
+        tracing::debug!("正在执行任务....");
+        return Ok(());
+    }
+    //设置锁状态
+    {
+        let mut cache = TASK_LOCK.write().map_err(|_err| anyhow!("获取锁失败"))?;
+        *cache = Some(true);
+    }
+
+    // let action = String::from("TXT2IMG");
+    let accepts = vec![
+        ("AI_STABLE_DIFFUSION", "AI_STABLE_DIFFUSION_WEBUI"),
+        ("PYTHON", "PYTHON"),
+        ("FFMPEG", "FFMPEG"),
+    ];
+
+    for accept in accepts {
+        //
+        let _res =
+            _tasks_worker_wakeup(token, &String::from(accept.0), &String::from(accept.1)).await;
+    }
+
+    //设置锁状态
+    {
+        let mut cache = TASK_LOCK.write().map_err(|_err| anyhow!("获取锁失败"))?;
+        *cache = None;
+    }
+    Ok(())
+}
+
+//
+pub async fn _tasks_worker_wakeup(
+    token: &String,
+    task_type: &String,
+    abilities: &String,
+) -> Result<()> {
     let peer_id = String::from("");
     let env = String::from("");
-    let task_type = String::from("AI_STABLE_DIFFUSION");
-    let abilities = String::from("AI_STABLE_DIFFUSION_WEBUI");
-    let action = String::from("TXT2IMG");
 
-    if let Ok(process_str) = tasks_task_take(token, &peer_id, &env, &task_type, &abilities).await {
+    if let Ok(process_str) = tasks_task_take(token, &peer_id, &env, task_type, abilities).await {
         tracing::debug!("{}", process_str);
         //
         let process_data: AiTaskProcessEntityResponse =
             serde_json::from_str(process_str.as_str()).map_err(|err| anyhow!("{}", err))?;
 
         let process = process_data.data;
+        let action = &process.action;
         let args = &process.model_args;
         let task_id = process.task_id;
 
@@ -151,6 +198,7 @@ pub async fn tasks_worker_wakeup(token: &String) -> Result<()> {
         let result = perform_task_and_block(
             &task_type,
             &abilities,
+            action,
             args,
             task_id,
             process.id,
@@ -177,38 +225,38 @@ pub async fn tasks_worker_wakeup(token: &String) -> Result<()> {
         )
         .await;
 
-        match result {
-            Ok(result_string) => {
-                tracing::debug!("{}", result_string);
-                //发送成功
-                let _update_cnt = tasks_task_process_result(
-                    token,
-                    task_id,
-                    process.id,
-                    100,
-                    0,
-                    &result_string,
-                    &String::new(),
-                )
-                .await?;
-            }
-            Err(err) => {
-                tracing::error!("{}", err);
-                //执行失败，
-                let _update_cnt = tasks_task_process_result(
-                    token,
-                    task_id,
-                    process.id,
-                    0,
-                    3,
-                    &String::from(""),
-                    &String::new(),
-                )
-                .await?;
-            }
-        }
+        // match result {
+        //     Ok(result_string) => {
+        //         tracing::debug!("{}", result_string);
+        //         //发送成功
+        //         let _update_cnt = tasks_task_process_result(
+        //             token,
+        //             task_id,
+        //             process.id,
+        //             100,
+        //             0,
+        //             &result_string,
+        //             &String::new(),
+        //         )
+        //         .await?;
+        //     }
+        //     Err(err) => {
+        //         tracing::error!("{}", err);
+        //         //执行失败，
+        //         let _update_cnt = tasks_task_process_result(
+        //             token,
+        //             task_id,
+        //             process.id,
+        //             0,
+        //             3,
+        //             &String::from(""),
+        //             &String::new(),
+        //         )
+        //         .await?;
+        //     }
+        // }
     } else {
-        tracing::error!("获取任务失败!");
+        tracing::error!("获取任务失败:{}-{}!", task_type, abilities);
     }
     Ok(())
 }
