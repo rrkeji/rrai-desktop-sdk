@@ -182,9 +182,9 @@ where
     // context.insert("frame_mask_path", "./video_mask");
     // context.insert("org_key_path", "./video_key");
 
-    // context.insert("key_min_gap", "10");
-    // context.insert("key_max_gap", "20");
-    // context.insert("key_th", "1080");
+    // context.insert("key_min_gap", "3");
+    // context.insert("key_max_gap", "70");
+    // context.insert("key_th", "7");
 
     // let code = Tera::one_off(
     //     include_str!("../python/source/analyze_key_frames.py"),
@@ -230,15 +230,15 @@ where
     // }
 
     // 5.将关键帧进行图生图
-    // if let Err(err) = _video2animation_img2img(
-    //     &format!("{}/video_key", workspace_path),
-    //     &format!("{}/video_mask", workspace_path),
-    //     &format!("{}/img2img_key", workspace_path),
-    // )
-    // .await
-    // {
-    //     return Err(anyhow!("将关键帧进行图生图失败:{}", err));
-    // }
+    if let Err(err) = _video2animation_img2img(
+        &format!("{}/video_key", workspace_path),
+        &format!("{}/video_mask", workspace_path),
+        &format!("{}/img2img_key", workspace_path),
+    )
+    .await
+    {
+        return Err(anyhow!("将关键帧进行图生图失败:{}", err));
+    }
     // 6.放大图片到原始视频的尺寸
 
     // 7.重命名关键帧,生成 .ebs 文件
@@ -273,8 +273,8 @@ async fn _pbrem_predict_post(key_path: &String, mask_path: &String) -> Result<()
         let request = serde_json::json!({
           "img": content,
           "td_abg_enabled": false,
-          "h_split": 256,
-          "v_split": 256,
+          "h_split": 1920,
+          "v_split": 1080,
           "n_cluster": 500,
           "alpha": 50,
           "th_rate": 0.1,
@@ -398,7 +398,21 @@ async fn _video2animation_img2img(
             let mut res = String::new();
 
             for key in res_value.caption.keys() {
-                res.push_str(key.as_str());
+                let key_str = key.as_str();
+
+                if key_str == "general"
+                    || key_str == "sensitive"
+                    || key_str == "questionable"
+                    || key_str == "explicit"
+                {
+                    continue;
+                }
+                if res_value.caption.get(key).is_some()
+                    && res_value.caption.get(key).unwrap() < &0.1_f32
+                {
+                    continue;
+                }
+                res.push_str(key_str);
                 res.push_str(",");
             }
             res
@@ -434,7 +448,7 @@ async fn _video2animation_img2img(
             "init_images": [
                 content
             ],
-            "prompt": format!("(best quality), ((masterpiece)), (highres), illustration, original, extremely detailed wallpaper, no background,{}",prompts),
+            "prompt": format!("(best quality), ((masterpiece)), (highres), illustration, original, extremely detailed wallpaper, no background,1girl, solo, hood, hooded bodysuit, bodysuit, sneakers, shoes, mask, night, superhero, city, spider web print, building, full body"),
             "negative_prompt": "(nsfw:2), (human face:1.3), badhandv4, easynegative, ng_deepnegative_v1_75t,sketches, (worst quality:2), (low quality:2), (normal quality:2),normal quality, ((monochrome)), ((grayscale)), see-through, skin spots, acnes, skin blemishes, bad anatomy,DeepNegative,(fat:1.2),facing away,effect,text",
             "override_settings": {
                 "sd_model_checkpoint": "全网首发 WT anime_V1.0.safetensors [86618977ac]"
@@ -444,19 +458,18 @@ async fn _video2animation_img2img(
             "n_iter": 1,
             "steps": 20,
             "cfg_scale": 7,
-            "width": 512,
-            "height": 768,
+            "width": 1080,
+            "height": 1920,
             "restore_faces": false,
             "tiling": false,
             "script_args": [],
-            "sampler_index": "DPM++ SDE Karras",
-            "mask":mask,
+            "sampler_index": "Euler a",
             "resize_mode": 1,
             "image_cfg_scale": 0,
             "denoising_strength": 0.8,
             "mask_blur": 10,
             "inpainting_fill": 0,
-            "inpaint_full_res": true,
+            "inpaint_full_res": false,
             "inpaint_full_res_padding": 0,
             "inpainting_mask_invert": 0,
             "initial_noise_multiplier": 0,
@@ -466,16 +479,15 @@ async fn _video2animation_img2img(
                     "args": [
                         {
                             "enabled": true,
-                            "module": "lineart_anime",
-                            "model": "control_v11p_sd15s2_lineart_anime [3825e83e]",
-                            "weight": 0.8,
-                            "image":content,
-                            "mask": "",
+                            "module": "lineart_standard (from white bg & black line)",
+                            "model": "control_v11p_sd15_lineart [43d4be0d]",
+                            "weight": 1,
                             "invert_image": false,
-                            "resize_mode": 0,
+                            "resize_mode": "Crop and Resize",
                             "rgbbgr_mode": false,
+                            "pixel_perfect": true,
                             "lowvram": false,
-                            "processor_res": 0,
+                            "processor_res": 512,
                             "threshold_a": 64,
                             "threshold_b": 64,
                             "guidance_start": 0,
@@ -484,18 +496,17 @@ async fn _video2animation_img2img(
                         },
                         {
                             "enabled": true,
-                            "module": "tile_resample",
+                            "module": "tile_colorfix+sharp",
                             "model": "control_v11f1e_sd15_tile [a371b31b]",
                             "weight": 1,
-                            "image":content,
-                            "mask": "",
                             "invert_image": false,
-                            "resize_mode": 0,
+                            "resize_mode": "Crop and Resize",
                             "rgbbgr_mode": false,
+                            "pixel_perfect": true,
                             "lowvram": false,
-                            "processor_res": 0,
-                            "threshold_a": 64,
-                            "threshold_b": 64,
+                            "processor_res": 512,
+                            "threshold_a": 8,
+                            "threshold_b": 1,
                             "guidance_start": 0,
                             "guidance_end": 1,
                             "guessmode": false
@@ -517,9 +528,9 @@ async fn _video2animation_img2img(
             {
                 tracing::debug!("解析所有图片:{}", images.len());
                 //上传图片
+
                 let mut i = 0;
                 for image_value in images {
-                    i = i + 1;
                     if let Some(image_base64) = image_value.as_str() {
                         //base64 转码
                         let content = general_purpose::STANDARD.decode(image_base64)?;
@@ -528,13 +539,18 @@ async fn _video2animation_img2img(
                         let filename = format!(
                             "{}/{}{}",
                             img2img_path,
-                            i,
+                            if i == 0 {
+                                String::from("")
+                            } else {
+                                format!("{}", i)
+                            },
                             entry.file_name().to_str().unwrap()
                         );
                         //创建文件
                         let mut output = File::create(filename.as_str())?;
                         output.write_all(&content)?;
                     }
+                    i = i + 1;
                 }
             }
         } else {
@@ -584,8 +600,6 @@ async fn _video2animation_proj_file(workspace: &crate::workspaces::Workspace) ->
     Ok(())
 }
 
-
-async fn _video2animation_run_proj()->Result<()>{
-
+async fn _video2animation_run_proj() -> Result<()> {
     Ok(())
 }
